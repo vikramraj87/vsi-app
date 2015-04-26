@@ -11,14 +11,20 @@ class VirtualCase implements Arrayable, Jsonable
     /** @var VirtualSlideLink[] */
     private $links;
 
+    /** @var string Provider of the case */
+    protected $provider;
+
+    /** @var string Url of the provider home page */
+    protected $providerHome;
+
     function __construct($data, $links)
     {
         if($links instanceof VirtualSlideLink) {
             $links = [$links];
         }
 
-        $this->data = $data;
-        $this->links = $links;
+        $this->data         = $data;
+        $this->links        = $links;
     }
 
     /**
@@ -36,6 +42,23 @@ class VirtualCase implements Arrayable, Jsonable
     {
         return $this->links;
     }
+
+    /**
+     * @return string
+     */
+    public function getProvider()
+    {
+        return $this->provider;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderHome()
+    {
+        return $this->providerHome;
+    }
+
 
 
     /**

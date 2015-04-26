@@ -4,6 +4,7 @@ namespace spec\Kivi\Providers;
 
 use DOMDocument;
 use DOMElement;
+use Kivi\Entity\RosaiVirtualCase;
 use Kivi\Entity\VirtualCase;
 use Kivi\Entity\VirtualSlideLink;
 use PhpSpec\ObjectBehavior;
@@ -46,7 +47,7 @@ EOD;
         $div = $this->generateDomFromRawHtml($html);
 
         $links = [new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem557/sem557-case5.svs")];
-        $case = new VirtualCase("Hemangioma (Inguinal region (canine))", $links);
+        $case = new RosaiVirtualCase("Hemangioma (Inguinal region (canine))", $links);
 
         $this->parseCaseGrid($div)
              ->shouldBeLike($case);
@@ -63,7 +64,7 @@ EOD;
         $div = $this->generateDomFromRawHtml($html);
 
         $links = [new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem580/sem580-case11.svs")];
-        $case = new VirtualCase("Sclerosing hemangioma (lung)", $links);
+        $case = new RosaiVirtualCase("Sclerosing hemangioma (lung)", $links);
 
         $this->parseCaseGrid($div)
             ->shouldBeLike($case);

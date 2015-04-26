@@ -36,6 +36,7 @@ Route::controllers([
 
 // Search route
 
+Route::get('search/{term}', 'SearchController@index');
 
 
 /**

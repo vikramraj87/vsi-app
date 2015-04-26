@@ -6,6 +6,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 
+use Kivi\Entity\LeedsVirtualCase;
 use Kivi\Entity\VirtualCase;
 use Kivi\Entity\VirtualSlideLink;
 
@@ -42,7 +43,7 @@ class Leeds implements ProviderInterface
             /** @var DOMElement $container */
 
             $divs = $container->getElementsByTagName('div');
-            $case = new VirtualCase(
+            $case = new LeedsVirtualCase(
                 $this->parseHistory($divs->item(0)),
                 $this->parseLinks($divs->item(1))
             );

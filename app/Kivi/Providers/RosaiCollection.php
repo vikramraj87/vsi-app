@@ -6,6 +6,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 
+use Kivi\Entity\RosaiVirtualCase;
 use Kivi\Entity\VirtualCase;
 use Kivi\Entity\VirtualSlideLink;
 
@@ -56,7 +57,10 @@ class RosaiCollection implements ProviderInterface
         $data = $this->parseData($p->textContent);
 
         $link = new VirtualSlideLink("H&E", $url);
-        return new VirtualCase($data, $link);
+        return new RosaiVirtualCase(
+            $data,
+            $link
+        );
 
     }
 
