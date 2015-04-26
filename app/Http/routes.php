@@ -13,6 +13,21 @@
 
 Route::get('/', 'WelcomeController@index');
 
+Route::get('leeds/{term}', function($term) {
+    $leeds = new \Kivi\Providers\Leeds();
+    return $leeds->search($term);
+});
+
+Route::get('rosai/{term}', function($term) {
+    $rosai = new \Kivi\Providers\RosaiCollection();
+    $links = $rosai->search($term);
+    $arrLinks = [];
+    foreach($links as $link) {
+        $arrLinks[] = $link->toArray();
+    }
+    return $arrLinks;
+});
+
 Route::get('home', 'HomeController@index');
 
 Route::controllers([
