@@ -1,22 +1,24 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Vikram
- * Date: 18/04/15
- * Time: 11:14 AM
- */
-
-namespace Kivi\Providers;
+<?php namespace Kivi\Providers;
 
 use anlutro\cURL\cURL;
+
 use DOMDocument;
 use DOMElement;
+use DOMXPath;
 
-class Leeds {
-    private $url = "http://www.virtualpathology.leeds.ac.uk/slidelibrary/index.php";
+use Kivi\Entity\VirtualCase;
+use Kivi\Entity\VirtualSlideLink;
 
-    public $containers;
+class Leeds implements ProviderInterface
+{
+    const URL = "http://www.virtualpathology.leeds.ac.uk/slidelibrary/index.php";
 
+    /**
+     * Returns array of virtual cases
+     *
+     * @param $term
+     * @return array|\Kivi\Entity\VirtualCase[]
+     */
     public function search($term)
     {
         $params = [
@@ -25,35 +27,33 @@ class Leeds {
         ];
 
         $curl = new cURL();
+        $response = $curl->post(self::URL, $params);
 
-        $response = $curl->post($this->url, $params);
-
-
-        $dom = new \DOMDocument();
+        $dom = new DOMDocument();
         @$dom->loadHTML($response->body);
 
-        $xpath = new \DOMXPath($dom);
+        $xpath = new DOMXPath($dom);
 
         /** @var \DOMNodeList $containers */
         $containers = $xpath->query("//*[@class='container']");
 
-        $output = [];
+        $cases = [];
         foreach($containers as $container) {
             /** @var DOMElement $container */
 
             $divs = $container->getElementsByTagName('div');
-            $case = [
-                "history" => $this->parseHistory($divs->item(0)),
-                "slides"  => $this->parseLinks($divs->item(1))
-            ];
-            $output[] = $case;
+            $case = new VirtualCase(
+                $this->parseHistory($divs->item(0)),
+                $this->parseLinks($divs->item(1))
+            );
+            $cases[] = $case;
         }
-        return $output;
+        return $cases;
     }
 
     /**
      * Parses DOMElement to string by removing extra spaces and
-     * unwanted <br/>, <span> tags, etc.
+     * unwanted br, span tags, etc.
      *
      * @param DOMElement $element
      * @return string
@@ -75,17 +75,27 @@ class Leeds {
         array_pop($parts);
 
         // Finally combining the parts to give a sentence
-        $history = implode(". ", $parts);
-        return($history);
+        return(implode(". ", $parts));
     }
 
+    /**
+     * Returns the virtual slide links for the case
+     *
+     * @param DOMElement $element
+     * @return VirtualSlideLink[]
+     */
     public function parseLinks(DOMElement $element)
     {
         $links = [];
+
+        // Get all the image tags
         $images = $element->getElementsByTagName("img");
+
         for($i=0; $i < $images->length; $i++) {
             /** @var DOMElement $img */
             $img = $images->item($i);
+
+            // Determine the stain used
             $stain = "";
             $tmp = $img->parentNode->previousSibling;
             while($tmp && $tmp->nodeName != "a") {
@@ -95,17 +105,13 @@ class Leeds {
                 }
                 $tmp = $tmp->previousSibling;
             }
-            $rawLinkSrc = $img->getAttribute('src');
 
+            // Extract the url from the src attribute
+            $rawLinkSrc = $img->getAttribute('src');
             $result = preg_match("/(http:\/\/[:\._a-zA-Z0-9\/-]+\.svs)\?0\+0\+(\d+)\+(\d+)/", $rawLinkSrc, $matches);
 
             if ($result) {
-                $links[] = [
-                    "stain" => $stain,
-                    "link" => $matches[1],
-                    "x" => $matches[2],
-                    "y" => $matches[3]
-                ];
+                $links[] = new VirtualSlideLink($stain, $matches[1]);
             }
         }
         return $links;

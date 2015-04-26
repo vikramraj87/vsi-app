@@ -1,12 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Vikram
- * Date: 25/04/15
- * Time: 8:22 PM
- */
-
-namespace Kivi\Entity;
+<?php namespace Kivi\Entity;
 
 
 use Illuminate\Contracts\Support\Arrayable;
@@ -20,14 +12,10 @@ class VirtualSlideLink implements Arrayable, Jsonable
     /** @var string Stain used in the virtual slide */
     private $stain = "H&E";
 
-    /** @var string Diagnosis or history related to the slide */
-    private $data;
-
-    function __construct($stain, $url, $data)
+    function __construct($stain, $url)
     {
         $this->stain = $stain;
         $this->url = $url;
-        $this->data = $data;
     }
 
     /**
@@ -51,7 +39,6 @@ class VirtualSlideLink implements Arrayable, Jsonable
         return [
             "stain" => $this->stain,
             "url"   => $this->url,
-            "data"  => $this->data
         ];
     }
 

@@ -5,17 +5,26 @@ namespace Kivi\Providers;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+
+use Kivi\Entity\VirtualCase;
 use Kivi\Entity\VirtualSlideLink;
+
 use anlutro\cURL\cURL;
 
-class RosaiCollection
+class RosaiCollection implements ProviderInterface
 {
-    private $link = "http://www.rosaicollection.net/?q=";
+    const LINK = "http://www.rosaicollection.net/?q=";
 
+    /**
+     * Returns array of virtual slide links
+     *
+     * @param $term
+     * @return VirtualCase[]
+     */
     public function search($term)
     {
         $curl = new cURL();
-        $response = $curl->get($this->link . urlencode($term));
+        $response = $curl->get(self::LINK . urlencode($term));
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body);
 
@@ -31,6 +40,12 @@ class RosaiCollection
         return $links;
     }
 
+    /**
+     * Returns virtual slide link from "casegrid" DIV
+     *
+     * @param DOMElement $element
+     * @return VirtualSlideLink
+     */
     public function parseCaseGrid(DOMElement $element)
     {
         /** @var DomElement $img */
@@ -39,9 +54,18 @@ class RosaiCollection
 
         $url  = $this->parseLink($img->getAttribute('src'));
         $data = $this->parseData($p->textContent);
-        return new VirtualSlideLink("H&E", $url, $data);
+
+        $link = new VirtualSlideLink("H&E", $url);
+        return new VirtualCase($data, $link);
+
     }
 
+    /**
+     * Extracts data from paragraph tag
+     *
+     * @param $string
+     * @return string
+     */
     public function parseData($string)
     {
         $result = preg_match("/^(.*) \[\d+\/\d+\]$/", $string, $matches);
@@ -51,6 +75,12 @@ class RosaiCollection
         return "";
     }
 
+    /**
+     * Extracts url from img href attribute
+     *
+     * @param $url
+     * @return string
+     */
     public function parseLink($url)
     {
         $result = preg_match("/http:\/\/[:\._a-zA-Z0-9\/-]+\.svs/", $url, $matches);

@@ -9,7 +9,15 @@
 namespace Kivi\Providers;
 
 
+use Kivi\Entity\VirtualCase;
+
 interface ProviderInterface
 {
+    /**
+     * Returns array of virtual cases
+     *
+     * @param $term
+     * @return VirtualCase[]
+     */
     public function search($term);
 } 

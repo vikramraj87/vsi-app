@@ -4,6 +4,7 @@ namespace spec\Kivi\Providers;
 
 use DOMDocument;
 use DOMElement;
+use Kivi\Entity\VirtualCase;
 use Kivi\Entity\VirtualSlideLink;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -31,7 +32,7 @@ class RosaiCollectionSpec extends ObjectBehavior
     public function it_parses_data_2()
     {
         $this->parseData("Hemangioma (Skin) [549/5]")
-            ->shouldReturn("Hemangioma (Skin)");
+             ->shouldReturn("Hemangioma (Skin)");
     }
 
     public function it_parses_a_case_grid_1()
@@ -44,8 +45,11 @@ class RosaiCollectionSpec extends ObjectBehavior
 EOD;
         $div = $this->generateDomFromRawHtml($html);
 
+        $links = [new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem557/sem557-case5.svs")];
+        $case = new VirtualCase("Hemangioma (Inguinal region (canine))", $links);
+
         $this->parseCaseGrid($div)
-             ->shouldBeLike(new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem557/sem557-case5.svs", "Hemangioma (Inguinal region (canine))"));
+             ->shouldBeLike($case);
     }
 
     public function it_parses_a_case_grid_2()
@@ -58,8 +62,11 @@ EOD;
 EOD;
         $div = $this->generateDomFromRawHtml($html);
 
+        $links = [new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem580/sem580-case11.svs")];
+        $case = new VirtualCase("Sclerosing hemangioma (lung)", $links);
+
         $this->parseCaseGrid($div)
-            ->shouldBeLike(new VirtualSlideLink("H&E", "http://rosai.secondslide.com/sem580/sem580-case11.svs", "Sclerosing hemangioma (lung)"));
+            ->shouldBeLike($case);
     }
 
     /**
