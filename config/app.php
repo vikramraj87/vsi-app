@@ -145,6 +145,10 @@ return [
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
 
+        /*
+         * Kivi Service Providers...
+         */
+        'Kivi\Repositories\RepositoryServiceProvider'
 	],
 
 	/*
