@@ -32,3 +32,8 @@ Route::get('admin/new-category', 'AdminController@newCategory');
 Route::get('categories/create', 'CategoryController@create');
 Route::post('categories', 'CategoryController@store');
 
+/*
+ * Case resource routes
+ */
+Route::get('cases/create', 'CaseController@create');
+Route::post('cases', 'CaseController@store');

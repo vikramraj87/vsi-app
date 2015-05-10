@@ -22,9 +22,16 @@ class CreateCasesTable extends Migration {
 
             // Parent child relationship
             $table->foreign('parent_id')
-                ->references('id')
-                ->on('categories')
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on('categories')
+                  ->onDelete('cascade');
+        });
+
+        Schema::create('virtual_slide_providers', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('url');
+            $table->timestamps();
         });
 
         // Create cases table
@@ -32,15 +39,21 @@ class CreateCasesTable extends Migration {
 		{
 			$table->increments('id');
             $table->text('clinical_data');
-            $table->string('diagnosis');
+            $table->string('diagnosis')->index();
             $table->integer('category_id')->unsigned()->nullable();
+            $table->integer('virtual_slide_provider_id')->unsigned()->nullable();
 			$table->timestamps();
 
             $table->foreign('category_id')
                   ->references('id')
-                  ->on('categories');
-                  // TODO: Look for option to make the category id null when a category is deleted
-		});
+                  ->on('categories')
+                  ->onDelete('set null');
+
+            $table->foreign('virtual_slide_provider_id')
+                  ->references('id')
+                  ->on('virtual_slide_providers')
+                  ->onDelete('cascade');
+        });
 
         // Create virtual slides table
         Schema::create('virtual_slides', function(Blueprint $table)
@@ -54,9 +67,9 @@ class CreateCasesTable extends Migration {
             $table->timestamps();
 
             $table->foreign('case_id')
-                ->references('id')
-                ->on('cases')
-                ->onDelete('cascade');
+                  ->references('id')
+                  ->on('cases')
+                  ->onDelete('cascade');
         });
 	}
 
@@ -69,6 +82,7 @@ class CreateCasesTable extends Migration {
 	{
         Schema::drop('virtual_slides');
 		Schema::drop('cases');
+        Schema::drop('virtual_slide_providers');
         Schema::drop('categories');
 	}
 

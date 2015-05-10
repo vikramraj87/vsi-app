@@ -3,7 +3,7 @@
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
-class VirtualCase implements Arrayable, Jsonable
+class VirtualCase
 {
     /** @var string */
     private $data;
@@ -57,28 +57,5 @@ class VirtualCase implements Arrayable, Jsonable
     public function getProviderHome()
     {
         return $this->providerHome;
-    }
-
-
-
-    /**
-     * Get the instance as an array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        // TODO: Implement toArray() method.
-    }
-
-    /**
-     * Convert the object to its JSON representation.
-     *
-     * @param  int $options
-     * @return string
-     */
-    public function toJson($options = 0)
-    {
-        // TODO: Implement toJson() method.
     }
 }

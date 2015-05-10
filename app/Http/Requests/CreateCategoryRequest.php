@@ -14,6 +14,25 @@ class CreateCategoryRequest extends Request {
 		return true;
 	}
 
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        $messages = [];
+
+        foreach($this->request->get('url') as $key => $val) {
+            $messages['url.' . $key . '.required'] = 'Please provide a virtual slide url';
+            $messages['url.' . $key . '.url']      = 'Please provide a valid url';
+        }
+
+        foreach($this->request->get('stain') as $key => $val) {
+            $messages['stain.' . $key . '.required'] = 'Please provide the stain used';
+        }
+
+        return $messages;
+    }
+
 	/**
 	 * Get the validation rules that apply to the request.
 	 *
