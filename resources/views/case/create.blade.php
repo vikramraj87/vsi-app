@@ -45,83 +45,58 @@
                                 </div>
                             </div>
 
-                            <hr/>
+                            <div id="virtual-slides">
+                            <?php $numberOfSlides = count(old('url')) ?: 1; ?>
+                                @for($i=0; $i<$numberOfSlides; $i++)
+                                <fieldset>
+                                    <legend>Virtual slide</legend>
+                                    <!-- Url[0] -->
+                                    @if($errors->has('url.' . $i))
+                                    <div class="form-group has-error">
+                                        <label class="col-md-4 control-label">Virtual slide url</label>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="text" name="url[]" value="{{ old('url.' . $i) }}"/>
+                                            <span class="help-block">{{ $errors->first('url.' . $i) }}</span>
+                                        </div>
 
-                            <!-- Url[0] -->
-                            @if($errors->has('url.0'))
-                            <div class="form-group has-error">
-                                <label class="col-md-4 control-label">Virtual slide url</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="url[]" value="{{ old('url.0') }}"/>
-                                    <span class="help-block">{{ $errors->first('url.0') }}</span>
-                                </div>
+                                    </div>
+                                    @else
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">Virtual slide url</label>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="text" name="url[]" value="{{ old('url.' . $i) }}"/>
+                                        </div>
+                                    </div>
+                                    @endif
 
-                            </div>
-                            @else
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Virtual slide url</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="url[]" value="{{ old('url.0') }}"/>
-                                </div>
-                            </div>
-                            @endif
+                                    <!-- Stain[0] -->
+                                    @if($errors->has('stain.' . $i))
+                                    <div class="form-group has-error">
+                                        <label class="col-md-4 control-label" for="">Stain</label>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="text" name="stain[]" value="{{ old('stain.' . $i) }}"/>
+                                            <span class="help-block">{{ $errors->first('stain.' . $i) }}</span>
+                                        </div>
+                                    </div>
+                                    @else
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label" for="">Stain</label>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="text" name="stain[]" value="{{ old('stain.' . $i) }}"/>
+                                        </div>
+                                    </div>
+                                    @endif
 
-                            <!-- Stain[0] -->
-                            @if($errors->has('stain.0'))
-                            <div class="form-group has-error">
-                                <label class="col-md-4 control-label" for="">Stain</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="stain[]" value="{{ old('stain.0') }}"/>
-                                    <span class="help-block">{{ $errors->first('stain.0') }}</span>
-                                </div>
+                                    @if($i > 0)
+                                    <div class="form-group">
+                                        <div class="col-md-6 col-md-offset-4">
+                                            <a class="btn btn-primary remove-slide" href="#">Remove slide</a>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </fieldset>
+                                @endfor
                             </div>
-                            @else
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="">Stain</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="stain[]" value="{{ old('stain.0') }}"/>
-                                </div>
-                            </div>
-                            @endif
-
-                            <hr/>
-
-                            <!-- Url[1] -->
-                            @if($errors->has('url.1'))
-                            <div class="form-group has-error">
-                                <label class="col-md-4 control-label">Virtual slide url</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="url[]" value="{{ old('url.1') }}"/>
-                                    <span class="help-block">{{ $errors->first('url.1') }}</span>
-                                </div>
-
-                            </div>
-                            @else
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Virtual slide url</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="url[]" value="{{ old('url.1') }}"/>
-                                </div>
-                            </div>
-                            @endif
-
-                            <!-- Stain[1] -->
-                            @if($errors->has('stain.1'))
-                            <div class="form-group has-error">
-                                <label class="col-md-4 control-label" for="">Stain</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="stain[]" value="{{ old('stain.1') }}"/>
-                                    <span class="help-block">{{ $errors->first('stain.1') }}</span>
-                                </div>
-                            </div>
-                            @else
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="">Stain</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" type="text" name="stain[]" value="{{ old('stain.1') }}"/>
-                                </div>
-                            </div>
-                            @endif
 
                             <div class="form-group">
                                 <div class="col-md-6 col-md-offset-4">
@@ -134,4 +109,5 @@
                 </div>
             </div>
         </div>
+
 @endsection

@@ -4,10 +4,13 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\CreateCaseRequest;
+use App\VirtualSlide;
 use Illuminate\Http\Request;
 
+use App\VirtualCase;
 use Kivi\Repositories\CategoryRepository;
 use Kivi\Repositories\VirtualSlideProviderRepository;
+use Kivi\Repositories\CaseRepository;
 
 class CaseController extends Controller {
     /** @var VirtualSlideProviderRepository */
@@ -16,10 +19,42 @@ class CaseController extends Controller {
     /** @var CategoryRepository */
     private $categoryRepository;
 
-    function __construct(CategoryRepository $categoryRepository, VirtualSlideProviderRepository $virtualSlideProviderRepository)
+    /** @var CaseRepository */
+    private $caseRepository;
+
+    function __construct(
+        CategoryRepository $categoryRepository,
+        VirtualSlideProviderRepository $virtualSlideProviderRepository,
+        CaseRepository $caseRepository
+    )
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->categoryRepository             = $categoryRepository;
         $this->virtualSlideProviderRepository = $virtualSlideProviderRepository;
+        $this->caseRepository                 = $caseRepository;
+    }
+
+    public function index($parentId = 0)
+    {
+        if($parentId > 0) {
+            $category = $this->categoryRepository->find($parentId);
+            $subCategories = $category->subCategories;
+            $parents = $this->categoryRepository->parents($category->id);
+        } else {
+            $category = null;
+            $parents = null;
+            $subCategories = $this->categoryRepository->topLevelCategories();
+        }
+        $providers = $this->virtualSlideProviderRepository->all();
+        $cases = [];
+        if(count($subCategories) == 0 && !is_null($category)) {
+            $cases = $category->cases;
+        }
+        return view('case.index', compact('category', 'subCategories', 'parents', 'providers', 'cases'));
+    }
+
+    public function show()
+    {
+
     }
 
 
@@ -33,46 +68,23 @@ class CaseController extends Controller {
 
     public function store(CreateCaseRequest $request)
     {
+        $caseData = [
+            'virtual_slide_provider_id' => $request->get('virtual_slide_provider_id'),
+            'clinical_data'             => $request->get('clinical_data'),
+            'category_id'               => $request->get('category_id')
+        ];
 
+        $slideData = [];
+        for($i = 0; $i < count($request->get('url')); $i++) {
+            $slideData[] = [
+                'url'   => $request->get('url')[$i],
+                'stain' => $request->get('stain')[$i]
+            ];
+        }
+
+        $result = $this->caseRepository->create($caseData, $slideData);
+        // todo: check result for true
+        $redirectUrl = $request->get('category_id') == null ? 'cases' : 'cases/' . $request->get('category_id');
+        return redirect($redirectUrl);
     }
-
-    /**
-     * Populate the form if resubmitted for adding multiple slides
-     *
-     * @param Request $request
-     * @return \Illuminate\View\View
-     */
-//    private function populateForm(Request $request)
-//    {
-//        $providers = $this->virtualSlideProviderRepository->all();
-//        $categories = $this->categoryRepository->allWithRelations();
-//
-//        $virtual_slide_provider_id = $request->get('virtual_slide_provider_id', 0);
-//        $category_id               = $request->get('category_id', 0); //Diagnosis
-//        $clinical_data             = $request->get('clinical_data', '');
-//
-//        $slides = [];
-//        if($request->exists('url')) {
-//            $urls   = $request->get('url');
-//            $stains = $request->get('stain');
-//            for($i = 0; $i < count($urls); $i++) {
-//                $slides[] = [
-//                    'url'   => $urls[$i],
-//                    'stain' => $stains[$i]
-//                ];
-//            }
-//        }
-//
-//        // One empty slide for displaying empty form fields for getting entry
-//        $slides[] = [
-//            'url'   => '',
-//            'stain' => ''
-//        ];
-//
-//
-//        return view('case.create', compact(
-//            'providers',     'categories',   'virtual_slide_provider_id',
-//            'clinical_data', 'category_id',  'slides'
-//        ));
-//    }
 }

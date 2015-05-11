@@ -11,7 +11,8 @@ module.exports = function (grunt) {
             dist: {
                 src: [
                     './resources/assets/bower/jquery/dist/jquery.min.js',
-                    './resources/assets/bower/bootstrap-sass-official/assets/javascripts/bootstrap.min.js'
+                    './resources/assets/bower/bootstrap-sass-official/assets/javascripts/bootstrap.min.js',
+                    './resources/assets/bower/handlebars/handlebars.min.js'
                 ],
                 dest: './public/js/vendor.js'
             }

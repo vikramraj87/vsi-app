@@ -2,7 +2,7 @@
 
 use App\Http\Requests\Request;
 
-class CreateCategoryRequest extends Request {
+class UpdateCategoryRequest extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -14,12 +14,6 @@ class CreateCategoryRequest extends Request {
 		return true;
 	}
 
-    public function messages()
-    {
-        return [
-            'category.unique_with' => 'Category already exists'
-        ];
-    }
     /**
 	 * Get the validation rules that apply to the request.
 	 *
@@ -29,7 +23,8 @@ class CreateCategoryRequest extends Request {
 	{
 		return [
 			'parent_id' => 'required|integer',
-            'category'  => 'required|string|unique_with:categories,parent_id'
+            'category'  => 'required|string|unique_with:categories,parent_id,' . $this->request->get('id'),
+            'id'        => 'required|integer|exists:categories,id'
 		];
 	}
 

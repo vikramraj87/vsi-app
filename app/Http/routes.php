@@ -1,16 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-
 Route::get('/', 'WelcomeController@index');
 
 Route::get('home', 'HomeController@index');
@@ -28,12 +17,19 @@ Route::get('admin/new-category', 'AdminController@newCategory');
 
 /*
  * Category resource routes
+ *
  */
-Route::get('categories/create', 'CategoryController@create');
+Route::get('categories/{id}', 'CategoryController@show');
+Route::get('categories', 'CategoryController@show');
+Route::get('categories/delete/{id}', 'CategoryController@destroy');
 Route::post('categories', 'CategoryController@store');
+Route::put('categories', 'CategoryController@update');
+
 
 /*
  * Case resource routes
  */
 Route::get('cases/create', 'CaseController@create');
+Route::get('cases', 'CaseController@index');
+Route::get('cases/{categoryId}', 'CaseController@index');
 Route::post('cases', 'CaseController@store');

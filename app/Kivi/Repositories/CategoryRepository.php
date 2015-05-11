@@ -10,16 +10,36 @@ class CategoryRepository
         return Category::find($id);
     }
 
-    public function allWithRelations()
+    public function all()
     {
         $categories = [];
-
-        $topLevelCategories = Category::where(["parent_id" => null])->get();
-        foreach($topLevelCategories as $topLevelCategory) {
-            $categories = $categories + $this->recursive($topLevelCategory);
+        $tmp = Category::select('parent_id', 'category', 'id')
+                            ->orderBy('parent_id')
+                            ->get();
+        foreach($tmp as $category) {
+            $parentId = $category->parent_id ?: 0;
+            $categories[$parentId][] = [
+                'id'       => $category->id,
+                'category' => $category->category
+            ];
         }
-
         return $categories;
+    }
+
+    public function parents($id)
+    {
+        $parents = [];
+        /** @var Category $category */
+        $category = Category::find($id);
+        $parent = $category->parent;
+        while($parent) {
+            array_unshift($parents, [
+                'id'       => $parent->id,
+                'category' => $parent->category
+            ]);
+            $parent = $parent->parent;
+        }
+        return $parents;
     }
 
     public function create($input)
@@ -27,23 +47,8 @@ class CategoryRepository
         return Category::create($input);
     }
 
-    private function recursive(Category $category, $prefix = "", $separator = "&raquo;")
+    public function topLevelCategories()
     {
-        $categories = [];
-
-        $subCategories = $category->subCategories;
-
-        if($prefix != "") {
-            $prefix = $prefix . " " . $separator . " ";
-        }
-
-        $definition = $prefix . $category->category;
-        $categories[$category->id] = $definition;
-        if(count($subCategories)) {
-            foreach ($subCategories as $subCategory) {
-                $categories = $categories + $this->recursive($subCategory, $prefix . $category->category);
-            }
-        }
-        return $categories;
+        return Category::where(['parent_id' => null])->get();
     }
 }

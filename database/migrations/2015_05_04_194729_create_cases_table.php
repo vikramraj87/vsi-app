@@ -25,8 +25,12 @@ class CreateCasesTable extends Migration {
                   ->references('id')
                   ->on('categories')
                   ->onDelete('cascade');
+
+            // Unique category and parent_id
+            $table->unique(['category', 'parent_id']);
         });
 
+        // Create virtual slide providers table
         Schema::create('virtual_slide_providers', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
@@ -39,7 +43,6 @@ class CreateCasesTable extends Migration {
 		{
 			$table->increments('id');
             $table->text('clinical_data');
-            $table->string('diagnosis')->index();
             $table->integer('category_id')->unsigned()->nullable();
             $table->integer('virtual_slide_provider_id')->unsigned()->nullable();
 			$table->timestamps();
@@ -59,7 +62,7 @@ class CreateCasesTable extends Migration {
         Schema::create('virtual_slides', function(Blueprint $table)
         {
             $table->increments('id');
-            $table->string('url');
+            $table->string('url')->unique();
             $table->string('stain', 50);
             $table->integer('x');
             $table->integer('y');
