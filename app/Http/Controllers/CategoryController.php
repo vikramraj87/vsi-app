@@ -12,38 +12,51 @@ class CategoryController extends Controller {
     /** @var CategoryRepository */
     private $categoryRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param CategoryRepository $categoryRepository
+     */
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function index(Request $request)
+    /**
+     * Shows the subcategories of selected category and provides form
+     * for editing or deleting the category
+     *
+     * @param int $id      Selected category
+     * @param int $edit_id Category to edit. O if none
+     * @return \Illuminate\View\View
+     */
+    public function show($id = 0, $edit_id = 0)
     {
-        $edit = intval($request->get('edit', '0'));
-        $subCategories = $this->categoryRepository->topLevelCategories();
-        return view('category.index', compact('edit', 'subCategories'));
-    }
+        /** @var int $edit */
+        $edit = $edit_id;
 
-    public function show(Request $request, $id = 0)
-    {
-        $edit = intval($request->get('edit', 0));
+        /** @var Category $category */
+        $category = null;
+
+        /** @var array $parents */
+        $parents  = [];
+
         if($id > 0) {
             $category = $this->categoryRepository->find($id);
             $subCategories = $category->subCategories;
             $parents = $this->categoryRepository->parents($category->id);
         } else {
-            $category = null;
-            $parents = null;
             $subCategories = $this->categoryRepository->topLevelCategories();
         }
         return view('category.index', compact('edit', 'category', 'parents', 'subCategories'));
     }
 
-    public function create()
-    {
-        return view('category.create', ['categories' => $this->categoryRepository->allWithRelations()]);
-    }
-
+    /**
+     * Creates a new category record
+     *
+     * @param Requests\CreateCategoryRequest $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store(Requests\CreateCategoryRequest $request)
     {
         $data = [
@@ -61,6 +74,13 @@ class CategoryController extends Controller {
         return $request->all();
     }
 
+    /**
+     * Deletes the category record
+     *
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
     public function destroy($id)
     {
         /** @var Category $category */

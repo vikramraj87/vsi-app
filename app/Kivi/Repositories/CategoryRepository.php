@@ -10,22 +10,6 @@ class CategoryRepository
         return Category::find($id);
     }
 
-    public function all()
-    {
-        $categories = [];
-        $tmp = Category::select('parent_id', 'category', 'id')
-                            ->orderBy('parent_id')
-                            ->get();
-        foreach($tmp as $category) {
-            $parentId = $category->parent_id ?: 0;
-            $categories[$parentId][] = [
-                'id'       => $category->id,
-                'category' => $category->category
-            ];
-        }
-        return $categories;
-    }
-
     public function parents($id)
     {
         $parents = [];
@@ -33,13 +17,39 @@ class CategoryRepository
         $category = Category::find($id);
         $parent = $category->parent;
         while($parent) {
-            array_unshift($parents, [
-                'id'       => $parent->id,
-                'category' => $parent->category
-            ]);
+            array_unshift($parents, $parent);
             $parent = $parent->parent;
         }
         return $parents;
+    }
+
+    /**
+     * Returns an array containing the ids of children, grand children
+     * of the category identified by the parentId
+     *
+     * @param $parentId
+     * @return array
+     */
+    public function hierarchicalCategoryIds($parentId)
+    {
+        $parentId = $parentId ?: null;
+        $categoryIds = [];
+
+        if(!is_null($parentId)) {
+            $categoryIds[] = $parentId;
+        }
+
+        for(
+            $tmp = [],$categories = Category::where('parent_id', $parentId)->get();
+            count($categories)>0;
+            $categories=Category::whereIn('parent_id', $tmp)->get(), $tmp = []
+        )
+        {
+            foreach($categories as $category) {
+                $tmp[] = $categoryIds[] = $category->id;
+            }
+        }
+        return $categoryIds;
     }
 
     public function create($input)

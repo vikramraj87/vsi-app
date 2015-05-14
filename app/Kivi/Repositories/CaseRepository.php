@@ -30,4 +30,11 @@ class CaseRepository
         }
         return false;
     }
+
+    public function casesByCategories($categoryIds)
+    {
+        $cases =  VirtualCase::whereIn('category_id', $categoryIds)->get();
+        $cases->load('slides');
+        return $cases;
+    }
 } 

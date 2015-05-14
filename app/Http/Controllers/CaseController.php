@@ -35,20 +35,21 @@ class CaseController extends Controller {
 
     public function index($parentId = 0)
     {
+        $category = null;
+        $parents = null;
+        $parentId = intval($parentId);
+
         if($parentId > 0) {
             $category = $this->categoryRepository->find($parentId);
             $subCategories = $category->subCategories;
             $parents = $this->categoryRepository->parents($category->id);
         } else {
-            $category = null;
-            $parents = null;
             $subCategories = $this->categoryRepository->topLevelCategories();
         }
         $providers = $this->virtualSlideProviderRepository->all();
-        $cases = [];
-        if(count($subCategories) == 0 && !is_null($category)) {
-            $cases = $category->cases;
-        }
+
+        $hierarchicalCategories = $this->categoryRepository->hierarchicalCategoryIds($parentId);
+        $cases = $this->caseRepository->casesByCategories($hierarchicalCategories);
         return view('case.index', compact('category', 'subCategories', 'parents', 'providers', 'cases'));
     }
 
@@ -57,14 +58,6 @@ class CaseController extends Controller {
 
     }
 
-
-    public function create()
-    {
-        $providers  = $this->virtualSlideProviderRepository->all();
-        $categories = $this->categoryRepository->allWithRelations();
-
-        return view('case.create', compact('providers', 'categories'));
-    }
 
     public function store(CreateCaseRequest $request)
     {
