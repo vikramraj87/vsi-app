@@ -32,8 +32,10 @@ Route::put('categories',                     ['as' => 'category-update',  'uses'
 /*
  * Case resource routes
  */
-Route::get('cases/create', 'CaseController@create');
-Route::get('cases', 'CaseController@index');
-Route::get('cases/{category_id}', 'CaseController@index')
+Route::get('cases/category/{category_id}',  ['as' => 'case-category', 'uses' => 'CaseController@index'])
     ->where('category_id', '[0-9]+');
-Route::post('cases', 'CaseController@store');
+Route::get('cases/{id}',                    ['as' => 'case-show',     'uses' => 'CaseController@show']);
+Route::get('cases',                         ['as' => 'case-index',    'uses' => 'CaseController@index']);
+Route::post('cases',                        ['as' => 'case-store',    'uses' => 'CaseController@store']);
+Route::put('cases',                         ['as' => 'case-update',   'uses' => 'CaseController@update']);
+Route::delete('cases/{id}',                 ['as' => 'case-destroy',  'uses' => 'CaseController@destroy']);

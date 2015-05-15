@@ -39,14 +39,14 @@ module.exports = function (grunt) {
         },
 
         // Options for grunt-phpspec
-        //phpspec: {
-        //    options: {
-        //        prefix: './vendor/bin/'
-        //    },
-        //    kivi: {
-        //        specs: 'app/Kivi'
-        //    }
-        //},
+        phpspec: {
+            options: {
+                prefix: './vendor/bin/'
+            },
+            kivi: {
+                specs: 'app/Kivi'
+            }
+        },
 
         // Options for grunt-notify
         //notify: {
@@ -63,23 +63,23 @@ module.exports = function (grunt) {
             sass: {
                 files: './resources/assets/sass/**/*.{scss,sass}',
                 tasks: ['sass:dist']
+            },
+            phpspec: {
+                files: [
+                    'app/Kivi/**/*.php',
+                    'app/spec/**/*.php'
+                ],
+                tasks: ['phpspec:kivi']
             }
-            //phpspec: {
-            //    files: [
-            //        'app/Kivi/**/*.php',
-            //        'app/spec/**/*.php'
-            //    ],
-            //    tasks: ['phpspec:kivi']
-            //}
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    //grunt.loadNpmTasks('grunt-phpspec');
+    grunt.loadNpmTasks('grunt-phpspec');
     //grunt.loadNpmTasks('grunt-notify');
 
     grunt.registerTask('css', ['sass', 'watch:sass']);
-    //grunt.registerTask('testing', ['phpspec:kivi', 'watch:phpspec']);
+    grunt.registerTask('testing', ['phpspec:kivi', 'watch:phpspec']);
 };

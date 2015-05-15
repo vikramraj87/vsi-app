@@ -1,6 +1,9 @@
 <?php $catId = is_null($category) ? 0 : $category->id; ?>
+<?php $title = is_null($category) ? 'Categories' : $category->category; ?>
 
 @extends('app')
+
+@section('title', $title)
 
 @section('content')
 
@@ -21,8 +24,8 @@
             <thead>
                 <tr>
                     <th>Category</th>
-                    <th></th>
-                    <th></th>
+                    <th>{{-- Column for edit button --}}</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -31,13 +34,6 @@
                 <tr>
                     <td><a href="{{ route('category-show', $cat->id) }}">{{ $cat->category }}</a></td>
                     <td><a href="{{ route('category-edit', [$catId, $cat->id]) }}" class="btn btn-primary">Edit</a></td>
-                    <td>
-                        <form action="{{ route('category-destroy', $cat->id) }}" method="post">
-                            <input type="hidden" name="_method" value="DELETE"/>
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-primary">Delete</button>
-                        </form>
-                    </td>
                 </tr>
                 @else
 

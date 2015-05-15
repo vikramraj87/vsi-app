@@ -1,9 +1,8 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
-use Kivi\Sanitizers\VirtualCaseSanitizer;
 
-class CreateCaseRequest extends Request {
+class UpdateCaseRequest extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -25,6 +24,7 @@ class CreateCaseRequest extends Request {
         foreach($this->request->get('url') as $key => $val) {
             $messages['url.' . $key . '.required'] = 'Please provide a virtual slide url';
             $messages['url.' . $key . '.url']      = 'Please provide a valid url';
+            $messages['url.' . $key . '.unique']   = 'The URL already exists with another diagnosis';
         }
 
         foreach($this->request->get('stain') as $key => $val) {
@@ -34,37 +34,27 @@ class CreateCaseRequest extends Request {
         return $messages;
     }
 
-	/**
-	 * Get the validation rules that apply to the request.
-	 *
-	 * @return array
-	 */
-	public function rules()
-	{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
         $rules = [
-			'virtual_slide_provider_id' => 'required|integer|exists:virtual_slide_providers,id',
+            'virtual_slide_provider_id' => 'required|integer|exists:virtual_slide_providers,id',
             'clinical_data'             => 'string',
             'category_id'               => 'required|integer|exists:categories,id'
-		];
+        ];
 
         foreach($this->request->get('url') as $key => $val) {
-            $rules['url.' . $key] = 'required|url|unique:virtual_slides,url';
+            $rules['url.' . $key] = 'required|url|unique:virtual_slides,url,' . $this->request->get('slide_id')[$key];
         }
 
         foreach($this->request->get('stain') as $key => $val) {
             $rules['stain.' . $key] = 'required';
         }
-
         return $rules;
-	}
-
-    /**
-     * Performs pre-validation sanitization
-     */
-    public function sanitize()
-    {
-        $input = $this->all();
-
-        $this->replace($input);
     }
+
 }
