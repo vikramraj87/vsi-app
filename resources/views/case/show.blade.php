@@ -24,6 +24,32 @@
 @section('title', $case->category->category . ' case')
 
 @section('content')
+{{-- Modal for deleting case --}}
+<div class="modal fade" id="delete-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Delete {{ $case->category->category }} case</h4>
+            </div> <!-- .modal-header -->
+            <div class="modal-body">
+                <p>Do you want to delete the selected case and its virtual slides</p>
+            </div>
+            <div class="modal-footer">
+                {{-- Form for deleting case --}}
+                <form action="{{ route('case-destroy', $case->id) }}" method="post">
+                    <input name="_method"     value="DELETE" type="hidden"/>
+                    <input name="category_id" value="{{ $case->category->id }}" type="hidden"/>
+                    <input name="_token"      value="{{ csrf_token() }}" type="hidden"/>
+                    <button type="submit" class="btn btn-primary">Delete case</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div> <!-- .modal-content -->
+    </div> <!-- .modal-dialog -->
+</div> <!-- .modal.fade -->
 
 {{-- Update form --}}
 <form role="form" action="{{ route('case-update') }}" method="post">
@@ -134,24 +160,15 @@
                 {{-- Submit button --}}
                 <button type="submit" class="btn btn-primary">Update case</button>
 
+                {{-- Delete button --}}
+                <a href="#delete-modal" role="button" class="btn btn-primary" data-toggle="modal">Delete case</a>
+
                 {{-- Button to cancel and go back to the case category page --}}
                 <a class="btn btn-primary" href="{{ route('case-category', $case->category->id) }}">Cancel</a>
             </div> <!-- .form-group -->
         </div> <!-- .col-md-12 -->
     </div> <!-- .row -->
 </form>
-
-{{-- Delete form --}}
-<div class="row">
-    <div class="col-md-12">
-        <form action="{{ route('case-destroy', $case->id) }}" method="post">
-            <input name="_method"     value="DELETE" type="hidden"/>
-            <input name="category_id" value="{{ $case->category->id }}" type="hidden"/>
-            <input name="_token"      value="{{ csrf_token() }}" type="hidden"/>
-            <button type="submit" class="btn btn-primary">Delete case</button>
-        </form>
-    </div>
-</div>
 
 {{-- Handlebars template for adding elements by JS --}}
 @include('handlebars.virtual-slide-edit')

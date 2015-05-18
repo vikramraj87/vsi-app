@@ -14,6 +14,14 @@ class UpdateCategoryRequest extends Request {
 		return true;
 	}
 
+    public function messages()
+    {
+        return [
+            'category.unique_with' => 'The category already exists',
+            'category.required'    => 'Please provide a category name'
+        ];
+    }
+
     /**
 	 * Get the validation rules that apply to the request.
 	 *

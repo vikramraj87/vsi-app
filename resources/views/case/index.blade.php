@@ -5,7 +5,6 @@
 @section('title', $title)
 
 @section('content')
-
         {{-- Breadcrumbs for categories --}}
             <ol class="breadcrumb">
                 <li><a href="{{ route('case-index') }}">Cases</a></li>

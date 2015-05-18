@@ -30,7 +30,7 @@ class CategoryController extends Controller {
      * @param int $edit_id Category to edit. O if none
      * @return \Illuminate\View\View
      */
-    public function show($id = 0, $edit_id = 0)
+    public function index($id = 0, $edit_id = 0)
     {
         /** @var int $edit */
         $edit = $edit_id;
@@ -69,9 +69,24 @@ class CategoryController extends Controller {
         return redirect($redirectUrl);
     }
 
+    /**
+     * Updates a category record identified by the id hidden field
+     *
+     * @param Requests\UpdateCategoryRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Requests\UpdateCategoryRequest $request)
     {
-        return $request->all();
+        $id       = $request->get('id');
+        $parentId = $request->get('parent_id');
+
+        $category           = $this->categoryRepository->find($id);
+        $category->category = $request->get('category');
+        $result = $category->save();
+
+        // todo: Handle $result = false
+
+        return redirect()->route('category-index', $parentId);
     }
 
     /**

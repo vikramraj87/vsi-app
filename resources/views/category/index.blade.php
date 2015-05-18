@@ -11,10 +11,10 @@
             <ol class="breadcrumb">
                 <li><a href="{{ route('category-index') }}">Categories</a></li>
             @foreach($parents as $cat)
-                <li><a href="{{ route('category-show', $cat->id) }}">{{ $cat->category }}</a></li>
+                <li><a href="{{ route('category-index', $cat->id) }}">{{ $cat->category }}</a></li>
             @endforeach
             @if(isset($category))
-                <li><a href="{{ route('category-show', $category->id) }}">{{ $category->category }}</a></li>
+                <li><a href="{{ route('category-index', $category->id) }}">{{ $category->category }}</a></li>
             @endif
             </ol>
 
@@ -32,7 +32,7 @@
             @foreach($subCategories as $cat)
                 @if($edit != $cat->id)
                 <tr>
-                    <td><a href="{{ route('category-show', $cat->id) }}">{{ $cat->category }}</a></td>
+                    <td><a href="{{ route('category-index', $cat->id) }}">{{ $cat->category }}</a></td>
                     <td><a href="{{ route('category-edit', [$catId, $cat->id]) }}" class="btn btn-primary">Edit</a></td>
                 </tr>
                 @else
@@ -41,7 +41,23 @@
                 <form role="form" class="form-inline" action="{{ route('category-update') }}" method="post">
                     <tr>
                         <td>
-                            <input type="text" class="form-control" name="category" value="{{ $cat->category }}"/>
+                            <?php
+                                $categoryName = $cat->category;
+                                $oldCategoryName = old('category');
+                                if(!is_null($oldCategoryName)) {
+                                    $categoryName = $oldCategoryName;
+                                }
+                            ?>
+                            @if($errors->has('category'))
+                            <div class="form-group has-error">
+                                <input type="text" class="form-control" name="category" value="{{{ $categoryName }}}"/>
+                                <span class="help-block">{{ $errors->first('category') }}</span>
+                            </div>
+                            @else
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="category" value="{{{ $categoryName }}}"/>
+                            </div>
+                            @endif
                         </td>
                         <td>
                             <button type="submit" class="btn btn-primary">
@@ -49,7 +65,7 @@
                             </button>
                         </td>
                         <td>
-                            <a class="btn btn-primary" href="{{ route('category-show', $catId) }}">
+                            <a class="btn btn-primary" href="{{ route('category-index', $catId) }}">
                                 Cancel
                             </a>
                             <input type="hidden" name="parent_id" value="{{ $category->id or 0 }}"/>

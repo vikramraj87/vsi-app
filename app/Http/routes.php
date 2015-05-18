@@ -20,10 +20,9 @@ Route::get('search/{term}', 'SearchController@index');
  * Category resource routes
  *
  */
-Route::get('categories/{id}',                ['as' => 'category-show',    'uses' => 'CategoryController@show']);
-Route::get('categories/{id}/edit/{edit_id}', ['as' => 'category-edit',    'uses' => 'CategoryController@show'])
+Route::get('categories/{id?}',               ['as' => 'category-index',    'uses' => 'CategoryController@index']);
+Route::get('categories/{id}/edit/{edit_id}', ['as' => 'category-edit',    'uses' => 'CategoryController@index'])
     ->where('edit_id', '[0-9]+');
-Route::get('categories',                     ['as' => 'category-index',   'uses' => 'CategoryController@show']);
 Route::delete('categories/{id}',             ['as' => 'category-destroy', 'uses' =>'CategoryController@destroy']);
 Route::post('categories',                    ['as' => 'category-store',   'uses' => 'CategoryController@store']);
 Route::put('categories',                     ['as' => 'category-update',  'uses' => 'CategoryController@update']);
