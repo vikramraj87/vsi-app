@@ -14,7 +14,8 @@ module.exports = function (grunt) {
                     'resources/assets/bower/jquery/dist/jquery.min.js',
                     'resources/assets/bower/bootstrap-sass-official/assets/javascripts/bootstrap.min.js',
                     'resources/assets/bower/angular/angular.min.js',
-                    'resources/assets/bower/angular-route/angular-route.min.js'
+                    'resources/assets/bower/angular-route/angular-route.min.js',
+                    'resources/assets/bower/angular-mocks/angular-mocks.js'
                 ],
                 dest: './public/js/vendor.js'
             }
@@ -86,12 +87,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-postcss');
-    grunt.registerTask('styles', ['sass:dev', 'postcss']);
+
     //grunt.loadNpmTasks('grunt-contrib-watch');
     //grunt.loadNpmTasks('grunt-phpspec');
     ////grunt.loadNpmTasks('grunt-notify');
 
     //grunt.registerTask('css', ['sass', 'watch:sass']);
     //grunt.registerTask('testing', ['phpspec:kivi', 'watch:phpspec']);
+
+    grunt.registerTask('styles', ['sass:dev', 'postcss']);
     grunt.registerTask('scripts', ['concat']);
 };

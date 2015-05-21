@@ -1,0 +1,3 @@
+describe('Category specification', function() {
+
+});

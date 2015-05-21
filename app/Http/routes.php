@@ -9,10 +9,6 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::get('test', function() {
-    $repo = new Kivi\Repositories\CategoryRepository();
-    return $repo->hierarchicalCategoryIds(0);
-});
 // Search route
 Route::get('search/{term}', 'SearchController@index');
 
@@ -38,3 +34,9 @@ Route::get('cases',                         ['as' => 'case-index',    'uses' => 
 Route::post('cases',                        ['as' => 'case-store',    'uses' => 'CaseController@store']);
 Route::put('cases',                         ['as' => 'case-update',   'uses' => 'CaseController@update']);
 Route::delete('cases/{id}',                 ['as' => 'case-destroy',  'uses' => 'CaseController@destroy']);
+
+/*
+ *
+ */
+Route::get('test', 'TestController@index');
+Route::get('cats', 'TestController@categories');
