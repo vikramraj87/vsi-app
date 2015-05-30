@@ -27,28 +27,12 @@ class CategoryController extends Controller {
      * for editing or deleting the category
      *
      * @param int $id      Selected category
-     * @param int $edit_id Category to edit. O if none
      * @return \Illuminate\View\View
      */
-    public function index($id = 0, $edit_id = 0)
+    public function index($id = 0)
     {
-        /** @var int $edit */
-        $edit = $edit_id;
-
-        /** @var Category $category */
-        $category = null;
-
-        /** @var array $parents */
-        $parents  = [];
-
-        if($id > 0) {
-            $category = $this->categoryRepository->find($id);
-            $subCategories = $category->subCategories;
-            $parents = $this->categoryRepository->parents($category->id);
-        } else {
-            $subCategories = $this->categoryRepository->topLevelCategories();
-        }
-        return view('category.index', compact('edit', 'category', 'parents', 'subCategories'));
+        $categories = $this->categoryRepository->all();
+        return response()->jsend('success', $categories);
     }
 
     /**

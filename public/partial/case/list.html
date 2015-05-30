@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-show="children.length">Cases <span class="badge pull-right">{{ cases.length }}</span></div>
+    <div class="panel-heading" ng-show="!children.length">{{ category.category }} cases <span class="badge pull-right">{{ cases.length }}</span></div>
+    <table class="table">
+        </thead>
+        <tbody>
+        <tr ng-repeat="case in cases">
+            <td ng-bind="case.category.category" ng-show="children.length"></td>
+            <td ng-bind="case.clinical_data" ng-show="!children.length"></td>
+            <td><a href="{{ case.provider.url }}" ng-bind="case.provider.name" target="_blank"></a></td>
+            <td>
+                <a ng-repeat="slide in case.slides" ng-href="{{ slide.url }}" target="_blank"><img ng-src="{{ slide.url }}?0+0+100+0" ng-bind="slide.stain" target="_blank" class="img-thumbnail slide-img"/></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

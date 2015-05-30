@@ -14,7 +14,7 @@ class CaseRepository
      */
     public function find($id)
     {
-        return VirtualCase::with('slides', 'provider', 'category')->find($id);
+        return VirtualCase::with('slides', 'provider', 'category')->select(['id', 'clinical_data', 'category_id', 'virtual_slide_provider_id'])->find($id);
     }
 
     /**
@@ -38,15 +38,13 @@ class CaseRepository
     /**
      * Updates the record
      *
-     * @param $id
+     * @param VirtualCase $case
      * @param $caseData
      * @param $slideData
      * @return bool
      */
-    public function update($id, $caseData, $slideData)
+    public function update($case, $caseData, $slideData)
     {
-        $case = $this->find($id);
-
         if($case->update($caseData)) {
             $slides = $this->createSlides($slideData, $case);
 
@@ -64,7 +62,7 @@ class CaseRepository
      */
     public function casesByCategories($categoryIds)
     {
-        $cases =  VirtualCase::whereIn('category_id', $categoryIds)->get();
+        $cases =  VirtualCase::whereIn('category_id', $categoryIds)->select(['id', 'clinical_data', 'category_id', 'virtual_slide_provider_id'])->get();
         $cases->load('slides', 'provider', 'category');
         return $cases;
     }

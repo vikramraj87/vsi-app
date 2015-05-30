@@ -1,47 +1,67 @@
 (function(angular){
-    var caseModule = angular.module('case');
-    caseModule.controller(
-        'CategoryController',
-        [
-            '$scope',
-            'categoryService',
-            'categoryHttpFacade',
-            function($scope, categoryService, categoryHttpFacade) {
+    angular.module('case')
+        .controller('CategoryController', ['$scope', 'categoryHttpFacade', '$filter', function($scope, categoryHttpFacade, $filter) {
+            // Holds all the categories
+            var _categories;
 
-                $scope.parents  = [];
-                $scope.category = null;
-                $scope.children = [];
-                $scope.select   = null;
+            // Initial state of the scope
+            $scope.parents = [];
+            $scope.category = null;
+            $scope.children = [];
 
-                var select = function(categoryId) {
-                    categoryId = parseInt(categoryId, 10);
-                    if(categoryId === 0) {
-                        $scope.parents  = [];
-                        $scope.category = null;
-                        $scope.children = categoryService.findSubcategories(categoryId);
-                        return;
+            // Filters one category from all categories by category Id
+            var _findById = function(categoryId) {
+                categoryId = parseInt(categoryId, 10);
+                return $filter('filter')(_categories, {id: categoryId}, true)[0];
+            }
+
+            // Gets all direct subcategories of category
+            var _findSubcategories = function(categoryId) {
+                    categoryId = parseInt(categoryId);
+                    if(categoryId == 0) {
+                        return $filter('filter')(_categories, {parent_id: null}, true);
                     }
-
-                    var category = categoryService.findCategory(categoryId);
-
-                    $scope.category = category;
-                    $scope.parents  = categoryService.findParents(category);
-                    $scope.children = categoryService.findSubcategories(categoryId);
+                    return $filter('filter')(_categories, {parent_id: categoryId}, true);
                 };
 
-                $scope.select = select;
+            // Gets all ancestors for the selected category
+            var _findParents = function(category) {
+                var parents = [],
+                    parent  = category;
 
-                var getCategoriesPromise = categoryHttpFacade.getAllCategories();
-                getCategoriesPromise
-                    .then(function(response) {
-                        categoryService.init(response.data);
-                        select(0);
-                    }).catch(function(response) {
+                while(parent.parent_id !== null) {
+                    parent = _findById(parent.parent_id);
+                    parents.unshift(parent);
+                }
 
-                    }).finally(function() {
+                return parents;
+            };
 
-                    });
+            // Scope function to change the selected category
+            var _select = function(categoryId) {
+                categoryId = parseInt(categoryId, 10);
+
+                $scope.children = _findSubcategories(categoryId);
+
+                if(categoryId === 0) {
+                    $scope.parents = [];
+                    $scope.category = null;
+                    return;
+                }
+
+                $scope.category = _findById(categoryId);
+                $scope.parents = _findParents($scope.category);
             }
-        ]
-    );
+
+            $scope.select = _select;
+
+            var _init = function() {
+                categoryHttpFacade.getAll().then(function(categories) {
+                    _categories = categories;
+                    _select(0);
+                });
+            };
+
+            _init();
+        }]);
 }(angular));

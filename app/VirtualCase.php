@@ -10,16 +10,16 @@ class VirtualCase extends Model
 
     public function slides()
     {
-        return $this->hasMany('App\VirtualSlide', 'case_id');
+        return $this->hasMany('App\VirtualSlide', 'case_id')->select(['id', 'case_id', 'url', 'stain']);
     }
 
     public function category()
     {
-        return $this->belongsTo('App\Category', 'category_id');
+        return $this->belongsTo('App\Category', 'category_id')->select('id', 'category');
     }
 
     public function provider()
     {
-        return $this->belongsTo('App\VirtualSlideProvider', 'virtual_slide_provider_id');
+        return $this->belongsTo('App\VirtualSlideProvider', 'virtual_slide_provider_id')->select(['id', 'name', 'url']);
     }
 } 

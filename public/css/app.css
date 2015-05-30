@@ -1,3 +1,11 @@
-
+#page-content ol.breadcrumb a {
+  cursor: pointer;
+}
+#page-content ul.nav a {
+  cursor: pointer;
+}
+#page-content .slide-img {
+  margin-right: 10px;
+}
 
 /*# sourceMappingURL=app.css.map */

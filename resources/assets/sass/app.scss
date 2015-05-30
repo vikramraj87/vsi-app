@@ -1,1 +1,16 @@
-
+#page-content {
+  ol.breadcrumb {
+    a {
+      cursor: pointer;
+    }
+  }
+  ul.nav {
+    // background-color: #f5f5f5;
+    a {
+      cursor: pointer;
+    }
+  }
+  .slide-img {
+    margin-right: 10px;
+  }
+}

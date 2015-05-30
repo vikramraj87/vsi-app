@@ -61,4 +61,9 @@ class CategoryRepository
     {
         return Category::where(['parent_id' => null])->get();
     }
+
+    public function all()
+    {
+        return Category::select(['id', 'category', 'parent_id'])->get();
+    }
 }

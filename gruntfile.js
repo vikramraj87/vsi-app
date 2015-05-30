@@ -14,8 +14,7 @@ module.exports = function (grunt) {
                     'resources/assets/bower/jquery/dist/jquery.min.js',
                     'resources/assets/bower/bootstrap-sass-official/assets/javascripts/bootstrap.min.js',
                     'resources/assets/bower/angular/angular.min.js',
-                    'resources/assets/bower/angular-route/angular-route.min.js',
-                    'resources/assets/bower/angular-mocks/angular-mocks.js'
+                    'resources/assets/bower/angular-route/angular-route.min.js'
                 ],
                 dest: './public/js/vendor.js'
             }
@@ -46,7 +45,7 @@ module.exports = function (grunt) {
                     src: 'public/css/bootstrap.css'
                 }
             }
-        }
+        },
 
         // Options for grunt-phpspec
         //phpspec: {
@@ -68,33 +67,32 @@ module.exports = function (grunt) {
         //    }
         //},
 
-        // Options for grunt-contrib-watch
-        //watch: {
-        //    sass: {
-        //        files: './resources/assets/sass/**/*.{scss,sass}',
-        //        tasks: ['sass:dist']
-        //    },
-        //    phpspec: {
-        //        files: [
-        //            'app/Kivi/**/*.php',
-        //            'app/spec/**/*.php'
-        //        ],
-        //        tasks: ['phpspec:kivi']
-        //    }
-        //}
+        watch: {
+            sass: {
+                files: './resources/assets/sass/**/*.{scss,sass}',
+                tasks: ['sass:dev']
+            }
+            //phpspec: {
+            //    files: [
+            //        'app/Kivi/**/*.php',
+            //        'app/spec/**/*.php'
+            //    ],
+            //    tasks: ['phpspec:kivi']
+            //}
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-postcss');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    //grunt.loadNpmTasks('grunt-contrib-watch');
     //grunt.loadNpmTasks('grunt-phpspec');
     ////grunt.loadNpmTasks('grunt-notify');
 
     //grunt.registerTask('css', ['sass', 'watch:sass']);
     //grunt.registerTask('testing', ['phpspec:kivi', 'watch:phpspec']);
 
-    grunt.registerTask('styles', ['sass:dev', 'postcss']);
+    grunt.registerTask('styles', ['sass:dev', 'postcss', 'watch:sass']);
     grunt.registerTask('scripts', ['concat']);
 };
