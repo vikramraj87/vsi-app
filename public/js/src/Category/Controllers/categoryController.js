@@ -1,5 +1,5 @@
 (function(angular){
-    angular.module('case')
+    angular.module('category')
         .controller('CategoryController', ['$scope', 'categoryHttpFacade', '$filter', function($scope, categoryHttpFacade, $filter) {
             // Holds all the categories
             var _categories;

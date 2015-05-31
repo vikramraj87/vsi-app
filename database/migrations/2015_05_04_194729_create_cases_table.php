@@ -64,8 +64,6 @@ class CreateCasesTable extends Migration {
             $table->increments('id');
             $table->string('url')->unique();
             $table->string('stain', 50);
-            $table->integer('x');
-            $table->integer('y');
             $table->integer('case_id')->unsigned();
             $table->timestamps();
 

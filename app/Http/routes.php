@@ -11,5 +11,8 @@ Route::group(['prefix' => 'api'], function() {
     Route::get('cases/category/{id}', ['as' => 'cases.category', 'uses' => 'CaseController@index']);
 
     Route::resource('providers', 'ProviderController', ['only' => ['index']]);
+
+    Route::get('slides/checkURL', 'SlideController@checkUrl');
 });
+
 

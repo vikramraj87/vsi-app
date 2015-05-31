@@ -1,7 +1,8 @@
-#page-content ol.breadcrumb a {
-  cursor: pointer;
+.table-vcenter > tbody > tr > td {
+  vertical-align: middle;
 }
-#page-content ul.nav a {
+
+#page-content a {
   cursor: pointer;
 }
 #page-content .slide-img {

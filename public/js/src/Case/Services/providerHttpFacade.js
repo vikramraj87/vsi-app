@@ -1,18 +1,26 @@
 (function(angular) {
-    var caseModule = angular.module('case');
-    caseModule.factory(
-        'providerHttpFacade',
-        [
-            '$http',
-            function($http) {
-                var _getProviders = function() {
-                    return $http.get('/providers');
-                };
+    angular.module('case')
+        .factory('providerHttpFacade', ['$http', '$q', function($http, $q) {
 
-                return {
-                    getProviders: _getProviders
-                };
+            var _processSuccessResponse = function(response) {
+                if(response.status === 200 && typeof response.data === 'object' && response.data.status === 'success') {
+                    return response.data.data;
+                }
+                if(response.data.status === 'fail') {
+                    return $q.reject(response.data.data);
+                }
+            };
+
+            var _processErrorResponse = function(response) {
+                return $q.reject(response.data.data)
             }
-        ]
-    );
+
+            var _getAll = function() {
+                return $http.get('/api/providers', {cache: true}).then(_processSuccessResponse, _processErrorResponse)
+            };
+
+            return {
+                getAll: _getAll
+            };
+        }]);
 }(angular));

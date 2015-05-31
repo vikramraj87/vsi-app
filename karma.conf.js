@@ -24,11 +24,14 @@ module.exports = function(config) {
         'public/js/src/Case/Services/caseHttpFacade.js',
         'public/js/spec/Case/Services/caseHttpFacadeSpec.js',
 
-        'public/js/src/Case/Services/categoryHttpFacade.js',
-        'public/js/spec/Case/Services/categoryHttpFacadeSpec.js',
+        'public/js/src/Case/Services/slideHttpFacade.js',
+        'public/js/spec/Case/Services/slideHttpFacadeSpec.js',
 
-        'public/js/src/Case/Controllers/categoryController.js',
-        'public/js/spec/Case/Controllers/categoryControllerSpec.js'
+        'public/js/src/Category/Services/categoryHttpFacade.js',
+        'public/js/spec/Category/Services/categoryHttpFacadeSpec.js',
+
+        'public/js/src/Category/Controllers/categoryController.js',
+        'public/js/spec/Category/Controllers/categoryControllerSpec.js'
     ],
 
 

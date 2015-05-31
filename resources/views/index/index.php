@@ -56,7 +56,7 @@
         <div class="row">
             <div class="col-md-3" ng-show="children.length">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Sub-categories <span class="badge pull-right">{{ children.length }}</span></div>
+                    <div class="panel-heading"><h3 class="panel-title">Sub-categories <span class="badge pull-right">{{ children.length }}</span></h3></div>
                 <ul class="nav nav-pills nav-stacked">
                     <li ng-repeat="child in children">
                         <a ng-click="select(child.id)">{{ child.category }}<span class="pull-right"><span class="glyphicon glyphicon-triangle-right"></span></span></a>
@@ -72,10 +72,21 @@
 <!-- End of Page content -->
 
 <script src="/js/vendor.js"></script>
+
 <script src="/js/src/app.js"></script>
-<script src="/js/src/Case/Services/categoryHttpFacade.js"></script>
+
+<script src="/js/src/Category/Services/categoryHttpFacade.js"></script>
+
+<script src="/js/src/Category/Controllers/categoryController.js"></script>
+<script src="/js/src/Category/Controllers/createController.js"></script>
+
 <script src="/js/src/Case/Services/caseHttpFacade.js"></script>
-<script src="/js/src/Case/Controllers/categoryController.js"></script>
+<script src="/js/src/Case/Services/providerHttpFacade.js"></script>
+<script src="/js/src/Case/Services/slideHttpFacade.js"></script>
+
+<script src="/js/src/Case/Directives/kvUnique.js"></script>
+
 <script src="/js/src/Case/Controllers/listController.js"></script>
+<script src="/js/src/Case/Controllers/editController.js"></script>
 </body>
 </html>

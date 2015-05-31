@@ -62,7 +62,7 @@ class CaseRepository
      */
     public function casesByCategories($categoryIds)
     {
-        $cases =  VirtualCase::whereIn('category_id', $categoryIds)->select(['id', 'clinical_data', 'category_id', 'virtual_slide_provider_id'])->get();
+        $cases =  VirtualCase::whereIn('category_id', $categoryIds)->select(['id', 'clinical_data', 'category_id', 'virtual_slide_provider_id'])->orderBy('created_at', 'DESC')->get();
         $cases->load('slides', 'provider', 'category');
         return $cases;
     }

@@ -1,6 +1,6 @@
 (function(angular){
     angular.module('case')
-        .controller('ListController', ['$scope', 'caseHttpFacade', '$timeout', function($scope, caseHttpFacade, $timeout){
+        .controller('CaseListController', ['$scope', 'caseHttpFacade', '$timeout', function($scope, caseHttpFacade, $timeout){
         $scope.cases = [];
 
         $scope.$watch(function(scope) {

@@ -19,6 +19,7 @@ class ProviderController extends Controller {
 
     public function index()
     {
-        return $this->providerRepository->all();
+        $providers = $this->providerRepository->all();
+        return response()->jsend('success', $providers);
     }
 }

@@ -1,6 +1,6 @@
 (function(angular) {
-    angular.module('case')
-        .factory('categoryHttpFacade', ['$http', function($http) {
+    angular.module('category')
+        .factory('categoryHttpFacade', ['$http', '$q', function($http, $q) {
             var _processSuccessResponse = function(response) {
                 if(response.status === 200 && typeof response.data === 'object' && response.data.status === 'success') {
                     return response.data.data;

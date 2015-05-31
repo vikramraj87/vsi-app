@@ -4,7 +4,7 @@ describe('Category controller specification', function() {
         http;
 
     beforeEach(function() {
-        module('case');
+        module('category');
     });
 
     beforeEach(inject(function($controller, $rootScope, $httpBackend, _categoryHttpFacade_) {
