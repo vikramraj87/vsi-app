@@ -10,7 +10,7 @@ angular.module('app', ['case', 'category', 'ngRoute'])
             controller: 'CaseListController'
         });
 
-        $routeProvider.when('/category/create', {
+        $routeProvider.when('/categories/create', {
             templateUrl: 'partials/category/create.html',
             controller: 'CategoryCreateController'
         });

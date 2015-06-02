@@ -19,7 +19,6 @@
                     return $q.reject(response.data.data)
                 }
 
-                //todo: while retrieving slides id should be retrieved
                 var _getCases = function(categoryId) {
                     categoryId = parseInt(categoryId, 10);
                     return $http.get('/api/cases/category/' + categoryId, {cache: true})

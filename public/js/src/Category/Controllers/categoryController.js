@@ -1,6 +1,6 @@
 (function(angular){
     angular.module('category')
-        .controller('CategoryController', ['$scope', 'categoryHttpFacade', '$filter', function($scope, categoryHttpFacade, $filter) {
+        .controller('CategoryController', ['$scope', 'categoryHttpFacade', '$filter', '$timeout', function($scope, categoryHttpFacade, $filter, $timeout) {
             // Holds all the categories
             var _categories;
 
@@ -54,6 +54,24 @@
             }
 
             $scope.select = _select;
+
+            $scope.flash = "";
+
+            var _flashMsg = function(message) {
+                $scope.flash = message;
+                $timeout(function() {
+                    $scope.flash = "";
+                }, 5000);
+            }
+
+            $scope.flashMsg = _flashMsg;
+
+            var _addCategory = function(category) {
+                _categories.push(category);
+                $scope.children.push(category);
+            };
+
+            $scope.addCategory = _addCategory;
 
             var _init = function() {
                 categoryHttpFacade.getAll().then(function(categories) {

@@ -1,6 +1,6 @@
 (function(angular){
     angular.module('case')
-        .directive('kvUnique', ['slideHttpFacade', function(slideHttpFacade){
+        .directive('kvUniqueUrl', ['slideHttpFacade', function(slideHttpFacade){
             return {
                 restrict: 'A',
                 require: 'ngModel',

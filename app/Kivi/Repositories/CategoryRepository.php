@@ -54,7 +54,11 @@ class CategoryRepository
 
     public function create($input)
     {
-        return Category::create($input);
+        $category = new Category();
+        $category->parent_id = $input['parent_id'];
+        $category->category = $input['category'];
+        $category->save();
+        return $category;
     }
 
     public function topLevelCategories()
@@ -65,5 +69,10 @@ class CategoryRepository
     public function all()
     {
         return Category::select(['id', 'category', 'parent_id'])->get();
+    }
+
+    public function fetchByParentIdAndCategory($parentId, $category)
+    {
+        return Category::select(['id', 'category', 'parent_id'])->where(['parent_id' => $parentId, 'category' => $category])->first();
     }
 }

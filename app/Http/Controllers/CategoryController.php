@@ -4,6 +4,7 @@ use App\Category;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Kivi\Repositories\CategoryRepository;
 
@@ -38,19 +39,35 @@ class CategoryController extends Controller {
     /**
      * Creates a new category record
      *
-     * @param Requests\CreateCategoryRequest $request
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Requests\CreateCategoryRequest $request)
+    public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'parent_id' => 'required|integer',
+            'category'  => 'required|string|unique_with:categories,parent_id'
+        ]);
+
+        if($validator->fails()) {
+            return response()->jsend('fail', [
+                'reason' => 'ValidationFailed',
+                'errors' => $validator->errors()->all()
+            ]);
+        }
+
         $data = [
             'parent_id' => $request->get('parent_id') == 0 ? null : $request->get('parent_id'),
             'category'  => $request->get('category')
         ];
-        $this->categoryRepository->create($data);
 
-        $redirectUrl = $data['parent_id'] == null ? 'categories' : 'categories/' . $data['parent_id'];
-        return redirect($redirectUrl);
+        $savedCategory = $this->categoryRepository->create($data);
+
+        if($savedCategory->exists('id')) {
+            return response()->jsend('success', $savedCategory->toArray());
+        }
+
+        return response()->jsend('fail');
     }
 
     /**
@@ -88,6 +105,20 @@ class CategoryController extends Controller {
                             'categories' : 'categories/' . $category->parent_id;
         $category->delete();
         return redirect($redirectUrl);
+    }
 
+    public function check($parentId = 0, $categoryName = "")
+    {
+        if(0 === $parentId || "" === $categoryName) {
+            return response()->jsend('success');
+        }
+        $category = $this->categoryRepository->fetchByParentIdAndCategory($parentId, $categoryName);
+        if(null === $category) {
+            return response()->jsend('success');
+        }
+        return response()->jsend('fail', [
+            'reason' => 'CategoryAlreadyExists',
+            'category' => $category
+        ]);
     }
 }

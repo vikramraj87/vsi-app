@@ -1,4 +1,4 @@
-(function(angular) {
+(function(angular, $) {
     angular.module('category')
         .factory('categoryHttpFacade', ['$http', '$q', function($http, $q) {
             var _processSuccessResponse = function(response) {
@@ -19,8 +19,36 @@
                     .then(_processSuccessResponse, _processErrorResponse);
             };
 
+            var _checkExists = function(parentId, category) {
+                parentId = parseInt(parentId, 10);
+                return $http.get('/api/categories/check-existence/' + parentId + '/' + encodeURIComponent(category))
+                    .then(function(response) {
+                        if(response.status !== 200) {
+                            $q.reject(response.data);
+                        }
+                        if(typeof response.data !== 'object') {
+                            $q.reject(response.data);
+                        }
+                        if(response.data.status === 'fail') {
+                            return true;
+                        }
+                        return false;
+                    })
+            };
+
+            var _save = function(category) {
+                return $http({
+                    method: 'POST',
+                    url: '/api/categories',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    data: $.param(category)
+                }).then(_processSuccessResponse, _processErrorResponse);
+            };
+
             return {
-                getAll: _getAll
+                getAll: _getAll,
+                checkExists: _checkExists,
+                save: _save
             };
         }]);
-}(angular));
+}(angular, window.jQuery));
