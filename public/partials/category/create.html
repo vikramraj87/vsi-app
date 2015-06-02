@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Create Category</h3>
+    </div>
+    <div class="panel-body">
+        <form role="form" class="form-horizontal" name="createCategoryForm" ng-submit="save()" novalidate>
+            <div ng-model="cat" kv-unique-category>
+                <div class="form-group" ng-class="{'has-error': category === null}">
+                    <label class="col-sm-2 control-label">Under</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static" ng-show="!category">None selected</p>
+                        <p class="form-control-static" ng-show="category" ng-bind="category.category"></p>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="help-block" ng-show="category === null">Please select from left pane</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-class="{'has-error': (createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$invalid) || createCategoryForm.$error.unique }">
+                    <label class="col-sm-2 control-label">Category</label>
+                    <div class="col-sm-6">
+                        <input class="form-control" type="text" placeholder="Category name" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}"
+                               name="categoryField" ng-model="cat.category" ng-required="true" ng-pattern="/^[a-z0-9 -_]+$/i"/>
+                    </div>
+                    <div class="col-sm-4">
+                        <span class="help-block" ng-show="createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$error.required">Please provide a name</span>
+                        <span class="help-block" ng-show="createCategoryForm.$error.unique">Category already exists</span>
+                        <span class="help-block" ng-show="createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$error.pattern">Invalid name</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary" ng-disabled="createCategoryForm.$invalid || cat.parent_id === 0"><span class="glyphicon glyphicon-save"></span> Save</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
