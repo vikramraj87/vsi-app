@@ -103,12 +103,19 @@ class CategoryController extends Controller {
             'category'  => 'required|string|unique_with:categories,parent_id,' . $id
         ]);
 
+        $validator->after(function($validator) use($request, $id) {
+            if($request->get('parent_id') == $id) {
+                $validator->errors()->add('parent_id', 'A category cannot be a parent for itself');
+            }
+        });
+
         if($validator->fails()) {
             return response()->jsend('fail', [
                 'reason' => 'ValidationFailed',
                 'errors' => $validator->errors()->all()
             ]);
         }
+
 
         $category->parent_id = $request->get('parent_id') == 0 ? null : intval($request->get('parent_id'));
         $category->category = $request->get('category');

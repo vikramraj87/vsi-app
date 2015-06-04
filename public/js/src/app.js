@@ -1,4 +1,13 @@
 angular.module('app', ['case', 'category', 'ngRoute'])
+    .constant('Api', {
+        'Categories': {
+            'Index': '/api/categories',
+            'Show': '/api/categories/:categoryId',
+            'CheckExistence': '/api/categories/check-existence/:parentId/:category/:excludeId',
+            'Store': '/api/categories',
+            'Update': '/api/categories/:categoryId'
+        }
+    })
     .config(function($routeProvider, $locationProvider) {
         $routeProvider.when('/cases/create', {
             templateUrl: 'partials/case/edit.html',

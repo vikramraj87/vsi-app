@@ -64,7 +64,10 @@
 
 <script src="/js/src/app.js"></script>
 
+<script src="/js/src/filters.js"></script>
+
 <script src="/js/src/Category/Services/categoryHttpFacade.js"></script>
+<script src="/js/src/Category/Services/categoryService.js"></script>
 
 <script src="/js/src/Category/Controllers/categoryController.js"></script>
 <script src="/js/src/Category/Controllers/listController.js"></script>

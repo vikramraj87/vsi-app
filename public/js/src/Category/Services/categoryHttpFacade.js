@@ -1,6 +1,6 @@
 (function(angular, $) {
     angular.module('category')
-        .factory('categoryHttpFacade', ['$http', '$q', function($http, $q) {
+        .factory('categoryHttpFacade', ['$http', '$q', 'Api', function($http, $q, Api) {
             var _processSuccessResponse = function(response) {
                 if(response.status === 200 && typeof response.data === 'object' && response.data.status === 'success') {
                     return response.data.data;
@@ -15,23 +15,26 @@
             }
 
             var _getAll = function() {
-                return $http.get('/api/categories')
+                return $http.get(Api.Categories.Index)
                     .then(_processSuccessResponse, _processErrorResponse);
             };
 
             var _getById = function(categoryId) {
-                return $http.get('/api/categories/' + categoryId)
+                return $http.get(Api.Categories.Show.replace(':categoryId', categoryId))
                     .then(_processSuccessResponse, _processErrorResponse);
             }
 
-            var _checkExists = function(parentId, category, exclude) {
+            var _checkExists = function(parentId, category, excludeId) {
                 parentId = parseInt(parentId, 10);
 
-                url = '/api/categories/check-existence/' + parentId + '/' + encodeURIComponent(category);
+               if(isNaN(excludeId)) {
+                   excludeId = 0;
+               }
 
-                if(exclude) {
-                    url += '/' + exclude;
-                }
+                var url = Api.Categories.CheckExistence.replace(':parentId', parentId);
+                url = url.replace(':category', encodeURIComponent(category));
+                url = url.replace(':excludeId', excludeId);
+
                 return $http.get(url)
                     .then(function(response) {
                         if(response.status !== 200) {
@@ -51,7 +54,7 @@
                 delete category.id;
                 return $http({
                     method: 'POST',
-                    url: '/api/categories',
+                    url: Api.Categories.Store,
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     data: $.param(category)
                 }).then(_processSuccessResponse, _processErrorResponse);
@@ -63,7 +66,7 @@
 
                 return $http({
                     method: 'PUT',
-                    url: '/api/categories/' + id,
+                    url: Api.Categories.Update.replace(':categoryId', id),
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     data: $.param(category)
                 }).then(_processSuccessResponse, _processErrorResponse);

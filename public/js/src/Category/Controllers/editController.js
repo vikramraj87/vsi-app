@@ -24,12 +24,14 @@
             var _init = function() {
                 $scope.cat = new Category();
                 $scope.cat.parent_id = $scope.category !== null ? $scope.category.id : 0;
+                $scope.currentId = 0;
 
                 if($routeParams.id) {
                     categoryHttpFacade.getById($routeParams.id).then(function(category) {
                         $scope.cat.id = category.id;
                         $scope.cat.parent_id = category.parent_id === null ? 0 : category.parent_id;
                         $scope.cat.category = category.category;
+                        $scope.currentId = category.id;
 
                         $scope.select($scope.cat.parent_id);
                     });

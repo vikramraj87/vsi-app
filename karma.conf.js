@@ -30,6 +30,9 @@ module.exports = function(config) {
         'public/js/src/Category/Services/categoryHttpFacade.js',
         'public/js/spec/Category/Services/categoryHttpFacadeSpec.js',
 
+        'public/js/src/Category/Services/categoryService.js',
+        'public/js/spec/Category/Services/categoryServiceSpec.js',
+
         'public/js/src/Category/Controllers/categoryController.js',
         'public/js/spec/Category/Controllers/categoryControllerSpec.js'
     ],
