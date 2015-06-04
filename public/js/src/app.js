@@ -10,9 +10,19 @@ angular.module('app', ['case', 'category', 'ngRoute'])
             controller: 'CaseListController'
         });
 
+        $routeProvider.when('/categories/edit/:id', {
+            templateUrl: 'partials/category/edit.html',
+            controller: 'CategoryEditController'
+        });
+
         $routeProvider.when('/categories/create', {
-            templateUrl: 'partials/category/create.html',
-            controller: 'CategoryCreateController'
+            templateUrl: 'partials/category/edit.html',
+            controller: 'CategoryEditController'
+        });
+
+        $routeProvider.when('/categories/:parentId?', {
+            templateUrl: 'partials/category/list.html',
+            controller: 'CategoryListController'
         });
 
         $routeProvider.otherwise({

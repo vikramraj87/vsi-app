@@ -7,7 +7,7 @@ class CategoryRepository
 
     public function find($id)
     {
-        return Category::find($id);
+        return Category::select(['id', 'category', 'parent_id'])->where('id', $id)->first();
     }
 
     public function parents($id)
@@ -59,6 +59,11 @@ class CategoryRepository
         $category->category = $input['category'];
         $category->save();
         return $category;
+    }
+
+    public function update(Category $category)
+    {
+        return $category->save();
     }
 
     public function topLevelCategories()

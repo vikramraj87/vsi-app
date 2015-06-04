@@ -1,0 +1,34 @@
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Subcategories <span class="badge pull-right" ng-bind="children.length"></span></h3>
+        </div>
+        <form class="form form-inline" name="createCategoryForm" novalidate ng-submit="save()">
+        <table class="table">
+            <tr ng-show="children.length > 6">
+                <td>
+                    <input class="form-control" type="text" ng-model="filterChildrenQuery" placeholder="Filter"/>
+                </td>
+                <td></td>
+            </tr>
+            <tr ng-repeat="category in children | filter: filterChildrenQuery">
+                <td><a ng-click="select(category.id)" ng-bind="category.category"></a></td>
+                <td><a ng-href="/categories/edit/{{category.id}}"><span class="glyphicon glyphicon-edit"></span> Edit</a></td>
+            </tr>
+
+            <tr ng-show="category">
+                <td>
+                    <div class="form-group" ng-model="cat" kv-unique-category ng-class="{'has-error': (createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$invalid) || createCategoryForm.$error.unique }">
+                        <input class="form-control" type="text" ng-model="cat.category" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}"
+                               placeholder="Category name" name="categoryField" ng-required="true" ng-pattern="/^[a-z0-9 -_]+$/i"/>
+                        <span class="help-block" ng-show="createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$error.required">Please provide a name</span>
+                        <span class="help-block" ng-show="createCategoryForm.$error.unique">Category already exists</span>
+                        <span class="help-block" ng-show="createCategoryForm.categoryField.$dirty && createCategoryForm.categoryField.$error.pattern">Invalid name</span>
+                    </div>
+                </td>
+                <td><button type="submit" class="btn btn-primary" ng-disabled="createCategoryForm.$invalid || cat.parent_id === 0"><span class="glyphicon glyphicon-plus-sign"></span> Add</button></td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</div>

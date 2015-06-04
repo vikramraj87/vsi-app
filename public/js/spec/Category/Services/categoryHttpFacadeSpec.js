@@ -68,6 +68,20 @@ describe('Category HTTP Facade', function() {
                 }]
         });
 
+        http.when('GET', '/api/categories/2').respond({
+            "status": "success",
+            "data": {
+                "id": 2,
+                "category": "Hematopathology",
+                "parent_id": null
+            }
+        });
+
+        http.when('GET', '/api/categories/200').respond({
+            "status": "fail",
+            "data": {"reason": "CategoryNotFound", "id": 200}
+        });
+
         http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcoma').respond({
             "status": "fail",
             "data": {
@@ -80,11 +94,15 @@ describe('Category HTTP Facade', function() {
             {"status": "success", "data": null}
         );
 
+        http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcoma/7').respond(
+            {"status": "success", "data": null}
+        );
+
         http.when('POST', '/api/categories', 'parent_id=16&category=Kidney').respond({
             "status": "success",
             "data": {
                 "parent_id": "16",
-                "category": "Bladder",
+                "category": "Kidney",
                 "updated_at": "2015-06-01 13:31:40",
                 "created_at": "2015-06-01 13:31:40",
                 "id": 17
@@ -100,6 +118,35 @@ describe('Category HTTP Facade', function() {
                 ]
             }
         });
+
+        //http.when('POST', '/api/categories', 'parent_id=160&category=Urinary%20Bladder').respond({
+        //    "status": "fail",
+        //    "data": {"reason": "ValidationFailed", "errors": ["The selected parent id is invalid."]}
+        //});
+
+
+        http.when('PUT', '/api/categories/17', 'parent_id=16&category=Urinary+Bladder').respond({
+            "status": "success",
+            "data": {"id": 17, "category": "Urinary Bladder", "parent_id": 16, "updated_at": "2015-06-03 06:46:14"}
+        });
+
+        http.when('PUT', '/api/categories/17', 'parent_id=16&category=Kidney').respond({
+            "status":"fail",
+            "data":{
+                "reason": "ValidationFailed",
+                "errors": [
+                    "This combination of category, parent id already exists."
+                ]
+            }
+        });
+
+        http.when('PUT', '/api/categories/200', 'parent_id=16&category=Kidney').respond({
+            "status":"fail",
+            "data":{
+                "reason": "CategoryNotFound",
+                'id': 200
+            }
+        });
     }));
 
     it('should fetch all categories from the backend', function() {
@@ -113,36 +160,91 @@ describe('Category HTTP Facade', function() {
         expect(categories[12].parent_id).toEqual(10);
     });
 
+    it('should process single category from the backend', function() {
+        var category;
+        facade.getById(2).then(function(c) {
+            category = c;
+        });
+        http.flush();
+        expect(category.id).toEqual(2);
+        expect(category.parent_id).toBeNull();
+        expect(category.category).toEqual('Hematopathology');
+
+        var error;
+        facade.getById(200).then(function(c) {}, function(e) {
+            error = e;
+        });
+        http.flush();
+        expect(error.reason).toEqual('CategoryNotFound');
+        expect(error.id).toEqual(200);
+    });
+
     it('should call the appropriate uri when checking for existence of category', function() {
         var r;
 
-        facade.checkExists(6, 'Kaposi Sarcoma').then(function(response) {
+        facade.checkExists(6, 'Kaposi Sarcoma', 0).then(function(response) {
             r = response;
         });
         http.flush();
         expect(r).toBeTruthy();
 
-        facade.checkExists(6, 'Kaposi Sarcom').then(function(response) {
+        facade.checkExists(6, 'Kaposi Sarcom', 0).then(function(response) {
+            r = response;
+        });
+        http.flush();
+        expect(r).toBeFalsy();
+
+        // Checking existence and also excluding
+        facade.checkExists(6, 'Kaposi Sarcoma', 7).then(function(response) {
             r = response;
         });
         http.flush();
         expect(r).toBeFalsy();
     });
 
-    it('should call the appropriate api to save the category', function() {
+    it('should call the appropriate api to save or update the category', function() {
+        // Create new category with valid data
         var savedCategory = null;
-
-        facade.save({parent_id: 16, category: 'Kidney'}).then(function(saved) {
+        facade.save({id:0, parent_id: 16, category: 'Kidney'}).then(function(saved) {
             savedCategory = saved;
         });
         http.flush();
         expect(savedCategory.id).toEqual(17);
 
+        // Create new category with category name already existing
         var failReason = "";
-        facade.save({parent_id: 16, category: 'Bladder'}).then(function() {}, function(error) {
+        facade.save({id: 0, parent_id: 16, category: 'Bladder'}).then(function() {}, function(error) {
             failReason = error.reason;
         });
         http.flush();
         expect(failReason).toEqual('ValidationFailed');
+
+        //Update already existing category with valid data
+        var updatedCategory = null;
+        facade.save({id: 17, parent_id: 16, category: 'Urinary Bladder'}).then(function(updated) {
+            updatedCategory = updated;
+        });
+        http.flush();
+        expect(updatedCategory.category).toEqual('Urinary Bladder');
+        expect(updatedCategory.id).toEqual(17);
+        expect(updatedCategory.parent_id).toEqual(16);
+        expect(updatedCategory.updated_at).toEqual('2015-06-03 06:46:14');
+
+        // Updated an existing category with the name of already exisitng category
+        var error = null;
+        facade.save({id: 17, parent_id: 16, category: 'Kidney'}).then(function() {}, function(e) {
+            error = e;
+        });
+        http.flush();
+        expect(error.reason).toEqual('ValidationFailed');
+
+        // Updated a non existing category
+        var error = null;
+        facade.save({id: 200, parent_id: 16, category: 'Kidney'}).then(function() {}, function(e) {
+            error = e;
+        });
+        http.flush();
+        expect(error.reason).toEqual('CategoryNotFound');
+        expect(error.id).toEqual(200);
     });
 });

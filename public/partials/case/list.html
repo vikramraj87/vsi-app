@@ -1,17 +1,38 @@
-<div class="panel panel-default">
-    <div class="panel-heading" ng-show="children.length"><h3 class="panel-title">Cases <span class="badge pull-right">{{ cases.length }}</span></h3></div>
-    <div class="panel-heading" ng-show="!children.length"><h3 class="panel-title">{{ category.category }} cases <span class="badge pull-right">{{ cases.length }}</span></h3></div>
-    <table class="table table-vcenter">
-        </thead>
-        <tbody>
-        <tr ng-repeat="case in cases">
-            <td ng-bind="case.category.category" ng-show="children.length"></td>
-            <td ng-bind="case.clinical_data" ng-show="!children.length"></td>
-            <td><a href="{{ case.provider.url }}" ng-bind="case.provider.name" target="_blank"></a></td>
-            <td>
-                <a ng-repeat="slide in case.slides" ng-href="{{ slide.url }}" target="_blank"><img ng-src="{{ slide.url }}?0+0+0+80" ng-bind="slide.stain" target="_blank" class="img-thumbnail slide-img"/></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="col-md-3" ng-show="children.length">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Sub-categories <span class="badge pull-right">{{ children.length }}</span></h3></div>
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-show="children.length > 6"><input type="text" class="form-control" placeholder="Filter" ng-model="filterChildrenQuery"/></li>
+                <li ng-repeat="child in children | filter: filterChildrenQuery ">
+                    <a ng-click="select(child.id)">{{ child.category }}<span class="pull-right"><span class="glyphicon glyphicon-triangle-right"></span></span></a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
 </div>
+<div ng-class="children.length ? 'col-md-9' : 'col-md-12'">
+    <div class="panel panel-default">
+        <div class="panel-heading" ng-show="children.length"><h3 class="panel-title">Cases <span class="badge pull-right">{{ cases.length }}</span></h3></div>
+        <div class="panel-heading" ng-show="!children.length"><h3 class="panel-title">{{ category.category }} cases <span class="badge pull-right">{{ cases.length }}</span></h3></div>
+        <table class="table table-vcenter">
+            </thead>
+            <tbody>
+            <tr ng-repeat="case in cases">
+                <td ng-bind="case.category.category" ng-show="children.length"></td>
+                <td ng-bind="case.clinical_data" ng-show="!children.length"></td>
+                <td><a href="{{ case.provider.url }}" ng-bind="case.provider.name" target="_blank"></a></td>
+                <td>
+                    <a ng-repeat="slide in case.slides" ng-href="{{ slide.url }}" target="_blank"><img ng-src="{{ slide.url }}?0+0+0+80" ng-bind="slide.stain" target="_blank" class="img-thumbnail slide-img"/></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+

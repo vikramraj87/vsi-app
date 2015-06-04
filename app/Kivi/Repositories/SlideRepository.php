@@ -3,8 +3,8 @@
 use App\VirtualSlide;
 
 class SlideRepository {
-    public function urlExists($url)
+    public function fetchByUrl($url)
     {
-        return (bool) count(VirtualSlide::where('url', $url)->get());
+        return VirtualSlide::select(['id', 'stain', 'case_id', 'url'])->where('url', $url)->first();
     }
 } 

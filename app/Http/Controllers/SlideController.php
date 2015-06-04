@@ -20,9 +20,18 @@ class SlideController extends Controller {
     {
         $url = $request->get('url');
 
-        if($this->slideRepository->urlExists($url)) {
-            return response()->jsend('fail', ['reason' => 'UrlAlreadyExists']);
+        if("" === $url) {
+            return response()->jsend('success');
         }
-        return response()->jsend('success');
+
+        $slide = $this->slideRepository->fetchByUrl($url);
+
+        if(null === $slide) {
+            return response()->jsend('success');
+        }
+        return response()->jsend('fail', [
+            'reason' => 'SlideWithUrlExists',
+            'slide' => $slide
+        ]);
     }
 }

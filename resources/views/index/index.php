@@ -37,7 +37,7 @@
 
 <div id="page-content" ng-controller="CategoryController">
     <div class="container" ng-show="flash">
-        <div class="alert alert-success">{{ flash }}</div>
+        <div class="alert alert-success" ng-bind="flash"></div>
     </div>
     <div class="container">
         <div class="row">
@@ -55,25 +55,7 @@
                 </ol>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-3" ng-show="children.length">
-                <div class="panel panel-default">
-                    <div class="panel-heading"><h3 class="panel-title">Sub-categories <span class="badge pull-right">{{ children.length }}</span></h3></div>
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li><input type="text" class="form-control" placeholder="Filter" ng-model="filterChildrenQuery"/></li>
-                            <li ng-repeat="child in children | filter: filterChildrenQuery ">
-                                <a ng-click="select(child.id)">{{ child.category }}<span class="pull-right"><span class="glyphicon glyphicon-triangle-right"></span></span></a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-            <div ng-view ng-class="children.length ? 'col-md-9' : 'col-md-12'">
-            </div>
-        </div>
+        <div class="row" ng-view></div>
     </div>
 </div>
 <!-- End of Page content -->
@@ -85,7 +67,8 @@
 <script src="/js/src/Category/Services/categoryHttpFacade.js"></script>
 
 <script src="/js/src/Category/Controllers/categoryController.js"></script>
-<script src="/js/src/Category/Controllers/createController.js"></script>
+<script src="/js/src/Category/Controllers/listController.js"></script>
+<script src="/js/src/Category/Controllers/editController.js"></script>
 
 <script src="/js/src/Category/Directives/kvUniqueCategory.js"></script>
 

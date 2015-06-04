@@ -27,13 +27,25 @@ class CategoryController extends Controller {
      * Shows the subcategories of selected category and provides form
      * for editing or deleting the category
      *
-     * @param int $id      Selected category
      * @return \Illuminate\View\View
      */
-    public function index($id = 0)
+    public function index()
     {
         $categories = $this->categoryRepository->all();
         return response()->jsend('success', $categories);
+    }
+
+    public function show($id)
+    {
+        $id = intval($id);
+        $category = $this->categoryRepository->find($id);
+        if(null === $category) {
+            return response()->jsend('fail', [
+                'reason' => 'CategoryNotFound',
+                'id' => $id
+            ]);
+        }
+        return response()->jsend('success', $category);
     }
 
     /**
@@ -45,7 +57,7 @@ class CategoryController extends Controller {
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'parent_id' => 'required|integer',
+            'parent_id' => 'required|integer|exists:categories,id',
             'category'  => 'required|string|unique_with:categories,parent_id'
         ]);
 
@@ -57,7 +69,7 @@ class CategoryController extends Controller {
         }
 
         $data = [
-            'parent_id' => $request->get('parent_id') == 0 ? null : $request->get('parent_id'),
+            'parent_id' => $request->get('parent_id') == 0 ? null : intval($request->get('parent_id')),
             'category'  => $request->get('category')
         ];
 
@@ -73,21 +85,41 @@ class CategoryController extends Controller {
     /**
      * Updates a category record identified by the id hidden field
      *
-     * @param Requests\UpdateCategoryRequest $request
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Requests\UpdateCategoryRequest $request)
+    public function update(Request $request, $id)
     {
-        $id       = $request->get('id');
-        $parentId = $request->get('parent_id');
+        $id = intval($id);
+        $category = $this->categoryRepository->find($id);
+        if(null === $category) {
+            return response()->jsend('fail', [
+                'reason' => 'CategoryNotFound',
+                'id' => $id
+            ]);
+        }
+        $validator = Validator::make($request->all(), [
+            'parent_id' => 'required|integer|exists:categories,id',
+            'category'  => 'required|string|unique_with:categories,parent_id,' . $id
+        ]);
 
-        $category           = $this->categoryRepository->find($id);
+        if($validator->fails()) {
+            return response()->jsend('fail', [
+                'reason' => 'ValidationFailed',
+                'errors' => $validator->errors()->all()
+            ]);
+        }
+
+        $category->parent_id = $request->get('parent_id') == 0 ? null : intval($request->get('parent_id'));
         $category->category = $request->get('category');
-        $result = $category->save();
 
-        // todo: Handle $result = false
+        $result = $this->categoryRepository->update($category);
 
-        return redirect()->route('category-index', $parentId);
+        if(false === $result) {
+            return response()->jsend('fail');
+        }
+
+        return response()->jsend('success', $category);
     }
 
     /**
@@ -107,13 +139,14 @@ class CategoryController extends Controller {
         return redirect($redirectUrl);
     }
 
-    public function check($parentId = 0, $categoryName = "")
+    public function check($parentId = 0, $categoryName = "", $exclude = 0)
     {
         if(0 === $parentId || "" === $categoryName) {
             return response()->jsend('success');
         }
+        $exclude = intval($exclude);
         $category = $this->categoryRepository->fetchByParentIdAndCategory($parentId, $categoryName);
-        if(null === $category) {
+        if(null === $category || $category->id === $exclude) {
             return response()->jsend('success');
         }
         return response()->jsend('fail', [

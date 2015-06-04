@@ -11,7 +11,7 @@
                             return;
                         }
                         ngModel.$setValidity('unique', false);
-                        categoryHttpFacade.checkExists(nVal.parent_id, nVal.category).then(function(exists) {
+                        categoryHttpFacade.checkExists(nVal.parent_id, nVal.category, nVal.id).then(function(exists) {
                             ngModel.$setValidity('unique', !exists);
                         }, function() {
                             ngModel.$setValidity('unique', true);

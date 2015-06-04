@@ -68,15 +68,24 @@
 
             var _addCategory = function(category) {
                 _categories.push(category);
-                $scope.children.push(category);
+                $scope.children = _findSubcategories(category.parent_id);
             };
 
+            var _replaceCategory = function(newCategory) {
+                var oldCategoryId = parseInt(newCategory.id);
+                _categories = $filter('filter')(_categories, function(category, index) {return category.id != oldCategoryId});
+                _categories.push(newCategory);
+                $scope.children = _findSubcategories(newCategory.parent_id);
+            }
+
             $scope.addCategory = _addCategory;
+            $scope.replaceCategory = _replaceCategory;
 
             var _init = function() {
                 categoryHttpFacade.getAll().then(function(categories) {
                     _categories = categories;
                     _select(0);
+                    $scope.$broadcast('CategoriesLoaded');
                 });
             };
 
