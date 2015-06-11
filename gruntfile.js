@@ -14,7 +14,7 @@ module.exports = function (grunt) {
                     'resources/assets/bower/jquery/dist/jquery.min.js',
                     'resources/assets/bower/bootstrap-sass-official/assets/javascripts/bootstrap.min.js',
                     'resources/assets/bower/angular/angular.min.js',
-                    'resources/assets/bower/angular-route/angular-route.min.js'
+                    'resources/assets/bower/angular-ui-router/release/angular-ui-router.min.js'
                 ],
                 dest: './public/js/vendor.js'
             }

@@ -1,6 +1,12 @@
 (function(angular, $) {
     angular.module('category')
-        .factory('categoryHttpFacade', ['$http', '$q', 'Api', function($http, $q, Api) {
+        .factory('categoryHttpFacade', ['$http', '$q', function($http, $q) {
+            var INDEX  = '/api/categories',
+                SHOW   = '/api/categories/:categoryId',
+                CHECK  = '/api/categories/check-existence/:parentId/:category/:excludeId',
+                STORE  = '/api/categories',
+                UPDATE = '/api/categories/:categoryId';
+
             var _processSuccessResponse = function(response) {
                 if(response.status === 200 && typeof response.data === 'object' && response.data.status === 'success') {
                     return response.data.data;
@@ -15,12 +21,12 @@
             }
 
             var _getAll = function() {
-                return $http.get(Api.Categories.Index)
+                return $http.get(INDEX)
                     .then(_processSuccessResponse, _processErrorResponse);
             };
 
             var _getById = function(categoryId) {
-                return $http.get(Api.Categories.Show.replace(':categoryId', categoryId))
+                return $http.get(SHOW.replace(':categoryId', categoryId))
                     .then(_processSuccessResponse, _processErrorResponse);
             }
 
@@ -31,7 +37,7 @@
                    excludeId = 0;
                }
 
-                var url = Api.Categories.CheckExistence.replace(':parentId', parentId);
+                var url = CHECK.replace(':parentId', parentId);
                 url = url.replace(':category', encodeURIComponent(category));
                 url = url.replace(':excludeId', excludeId);
 
@@ -54,7 +60,7 @@
                 delete category.id;
                 return $http({
                     method: 'POST',
-                    url: Api.Categories.Store,
+                    url: STORE,
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     data: $.param(category)
                 }).then(_processSuccessResponse, _processErrorResponse);
@@ -66,7 +72,7 @@
 
                 return $http({
                     method: 'PUT',
-                    url: Api.Categories.Update.replace(':categoryId', id),
+                    url: UPDATE.replace(':categoryId', id),
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     data: $.param(category)
                 }).then(_processSuccessResponse, _processErrorResponse);

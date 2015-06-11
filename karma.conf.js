@@ -34,7 +34,15 @@ module.exports = function(config) {
         'public/js/spec/Category/Services/categoryServiceSpec.js',
 
         'public/js/src/Category/Controllers/categoryController.js',
-        'public/js/spec/Category/Controllers/categoryControllerSpec.js'
+        'public/js/spec/Category/Controllers/categoryControllerSpec.js',
+
+        'public/js/src/Auth/Services/userHttpFacade.js',
+        'public/js/spec/Auth/Services/userHttpFacadeSpec.js',
+        //
+        'public/js/src/Auth/Services/authHttpFacade.js',
+        'public/js/spec/Auth/Services/authHttpFacadeSpec.js',
+        'public/js/src/Auth/Services/authService.js',
+        'public/js/spec/Auth/Services/authServiceSpec.js'
     ],
 
 

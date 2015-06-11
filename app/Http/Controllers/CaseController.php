@@ -29,6 +29,8 @@ class CaseController extends Controller {
         $this->categoryRepository             = $categoryRepository;
         $this->virtualSlideProviderRepository = $virtualSlideProviderRepository;
         $this->caseRepository                 = $caseRepository;
+
+        $this->middleware('admin', ['except' => 'index']);
     }
 
     /**
@@ -114,24 +116,21 @@ class CaseController extends Controller {
      */
     public function update(Request $request, $id)
     {
+        $id = intval($id);
+        $case = $this->caseRepository->find($id);
+        if(null === $case) {
+            return response()->jsend('fail', [
+                'reason' => 'CaseNotFound',
+                'id' => $id
+            ]);
+        }
+
         $validator = $this->getValidator($request);
 
         if($validator->fails()) {
             return response()->jsend('fail', [
                 'reason' => 'ValidationFailed',
                 'errors' => $validator->errors()->all()
-            ]);
-        }
-
-        $id = intval($id);
-
-        /** @var VirtualCase $case */
-        $case = $this->caseRepository->find($id);
-
-        if(null === $case) {
-            return response()->jsend('fail', [
-                'reason' => 'CaseNotFound',
-                'id' => $id
             ]);
         }
 
@@ -204,7 +203,8 @@ class CaseController extends Controller {
         for ($i = 0; $i < count($request->get('url')); $i++) {
             $slideData[] = [
                 'url'   => $request->get('url')[$i],
-                'stain' => $request->get('stain')[$i]
+                'stain' => $request->get('stain')[$i],
+                'remarks' => $request->get('remarks')[$i]
             ];
         }
         return $slideData;
@@ -225,6 +225,10 @@ class CaseController extends Controller {
 
         foreach ($request->get('stain') as $key => $val) {
             $rules['stain.' . $key] = 'required';
+        }
+
+        foreach ($request->get('remarks') as $key => $val) {
+            $rules['remarks.' . $key] = 'string';
         }
 
         return Validator::make($request->all(), $rules);

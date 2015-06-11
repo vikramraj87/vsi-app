@@ -10,7 +10,7 @@ describe("Slide HTTP Facade", function() {
         facade = _slideHttpFacade_;
         http = $httpBackend;
 
-        http.when('GET', '/api/slides/check-url-existence?url=http%3A%2F%2F129.11.191.7%2FResearch_4%2FTeaching%2FEducation%2FPostgraduate%2FCOW%2FCOW5%2F204049.svs')
+        http.when('GET', '/api/slides/check-url-existence/0?url=http%3A%2F%2F129.11.191.7%2FResearch_4%2FTeaching%2FEducation%2FPostgraduate%2FCOW%2FCOW5%2F204049.svs')
             .respond({
                 "status": "fail",
                 "data": {
@@ -24,11 +24,17 @@ describe("Slide HTTP Facade", function() {
                 }
             });
 
-        http.when('GET', '/api/slides/check-url-existence?url=http%3A%2F%2Fgoogle.com')
+        http.when('GET', '/api/slides/check-url-existence/0?url=http%3A%2F%2Fgoogle.com')
             .respond({
                 'status': 'success',
                 'data': null
-            });
+        });
+
+        http.when('GET', '/api/slides/check-url-existence/24?url=http%3A%2F%2F129.11.191.7%2FResearch_4%2FTeaching%2FEducation%2FPostgraduate%2FCOW%2FCOW5%2F204049.svs')
+            .respond({
+                'status': 'success',
+                'data': null
+        });
     }));
 
     it("should call the correct url with correct query parameter", function(){

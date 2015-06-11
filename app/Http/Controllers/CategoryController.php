@@ -21,6 +21,7 @@ class CategoryController extends Controller {
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
+        $this->middleware('admin', ['except' => 'index']);
     }
 
     /**
@@ -129,22 +130,16 @@ class CategoryController extends Controller {
         return response()->jsend('success', $category);
     }
 
-    /**
-     * Deletes the category record
-     *
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Exception
-     */
-    public function destroy($id)
-    {
-        /** @var Category $category */
-        $category = $this->categoryRepository->find($id);
-        $redirectUrl = $category->parent_id == null ?
-                            'categories' : 'categories/' . $category->parent_id;
-        $category->delete();
-        return redirect($redirectUrl);
-    }
+
+//    public function destroy($id)
+//    {
+//        /** @var Category $category */
+//        $category = $this->categoryRepository->find($id);
+//        $redirectUrl = $category->parent_id == null ?
+//                            'categories' : 'categories/' . $category->parent_id;
+//        $category->delete();
+//        return redirect($redirectUrl);
+//    }
 
     public function check($parentId = 0, $categoryName = "", $exclude = 0)
     {

@@ -10,7 +10,7 @@ class VirtualCase extends Model
 
     public function slides()
     {
-        return $this->hasMany('App\VirtualSlide', 'case_id')->select(['id', 'case_id', 'url', 'stain']);
+        return $this->hasMany('App\VirtualSlide', 'case_id')->select(['id', 'case_id', 'url', 'stain', 'remarks']);
     }
 
     public function category()

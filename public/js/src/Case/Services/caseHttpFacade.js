@@ -6,6 +6,12 @@
             '$http',
             '$q',
             function($http, $q) {
+                var INDEX   = '/api/cases/category/:categoryId',
+                    SHOW    = '/api/cases/:caseId',
+                    STORE   = '/api/cases',
+                    UPDATE  = '/api/cases/:caseId',
+                    DESTROY = '/api/cases/:caseId';
+
                 var _processSuccessResponse = function(response) {
                     if(response.status === 200 && typeof response.data === 'object' && response.data.status === 'success') {
                         return response.data.data;
@@ -21,14 +27,14 @@
 
                 var _getCases = function(categoryId) {
                     categoryId = parseInt(categoryId, 10);
-                    return $http.get('/api/cases/category/' + categoryId, {cache: true})
+                    return $http.get(INDEX.replace(':categoryId', categoryId), {cache: true})
                         .then(_processSuccessResponse, _processErrorResponse);
                 };
 
                 //todo: while retrieving slides id should be retrieved
                 var _getCase = function(caseId) {
                     caseId = parseInt(caseId, 10);
-                    return $http.get('/api/cases/' + caseId)
+                    return $http.get(SHOW.replace(':caseId', caseId))
                         .then(_processSuccessResponse, _processErrorResponse);
                 };
 
@@ -38,15 +44,17 @@
                         'virtual_slide_provider_id': virtualCase.virtualSlideProviderId,
                         'category_id': virtualCase.categoryId,
                         'url': [],
-                        'stain': []
+                        'stain': [],
+                        'remarks': []
                     };
 
                     angular.forEach(virtualCase.slides, function(slide) {
                         data.url.push(slide.url);
                         data.stain.push(slide.stain);
+                        data.remarks.push(slide.remarks);
                     });
 
-                    if(virtualCase.id === undefined) {
+                    if(virtualCase.id === 0) {
                         return _saveCase(data);
                     }
 
@@ -60,10 +68,9 @@
 
                 var _saveCase = function(data) {
                     var postData = $.param(data);
-
                     return $http({
                         method: 'POST',
-                        url: '/api/cases',
+                        url: STORE,
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         data: postData
                     }).then(_processSuccessResponse, _processErrorResponse);
@@ -76,14 +83,14 @@
 
                     return $http({
                         method: 'PUT',
-                        url: '/api/cases/' + id,
+                        url: UPDATE.replace(':caseId', id.toString()),
                         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                         data: postData
                     }).then(_processSuccessResponse, _processErrorResponse);
                 };
 
                 var _delete = function(id) {
-                    return $http.delete('/api/cases/' + id)
+                    return $http.delete(DESTROY.replace(':caseId', id.toString()))
                         .then(_processSuccessResponse, _processErrorResponse);
                 }
 

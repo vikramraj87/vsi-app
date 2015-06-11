@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder {
 	{
 		Model::unguard();
 
-		// $this->call('UserTableSeeder');
-        $this->call('VirtualSlideProviderTableSeeder');
-        $this->call('CategoryTableSeeder');
+        DB::table('users')->truncate();
+
+        $this->call('UserTableSeeder');
 	}
 
 }

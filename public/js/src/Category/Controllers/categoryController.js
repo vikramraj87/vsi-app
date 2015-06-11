@@ -1,15 +1,13 @@
 (function(angular){
     angular.module('category')
         .controller('CategoryController', [
-            '$scope', 'categoryHttpFacade', 'categoryService', '$filter', '$timeout',
-            function($scope, categoryHttpFacade, categoryService, $filter, $timeout) {
+            '$scope', 'categoryHttpFacade', 'categoryService', '$filter', '$timeout', '$stateParams', '$state',
+            function($scope, categoryHttpFacade, categoryService, $filter, $timeout, $stateParams, $state) {
 
                 // Initial state of the scope
                 $scope.parents = [];
                 $scope.category = null;
                 $scope.children = [];
-
-                $scope.flash = "";
 
                 // Scope function to change the selected category
                 var _select = function(categoryId) {
@@ -25,7 +23,6 @@
                     $scope.category = categoryService.findById(categoryId);
                     $scope.parents = categoryService.findParents(categoryId);
                 }
-                $scope.select = _select;
 
                 var _flashMsg = function(message) {
                     $scope.flash = message;
@@ -33,26 +30,36 @@
                         $scope.flash = "";
                     }, 5000);
                 }
-                $scope.flashMsg = _flashMsg;
 
                 var _addCategory = function(category) {
                     categoryService.addCategory(category);
                     $scope.children = categoryService.findSubcategories(category.parent_id);
                 };
-                $scope.addCategory = _addCategory;
+
+                $scope.$on('CategoryAdded', function(event, args) {
+                    _addCategory(args.addedCategory);
+                });
 
                 var _replaceCategory = function(newCategory) {
                     categoryService.replaceCategory(newCategory);
                     $scope.children = categoryService.findSubcategories(newCategory.parent_id);
                 }
-                $scope.replaceCategory = _replaceCategory;
+
+                $scope.$on('CategoryEdited', function(event, args) {
+                    _replaceCategory(args.editedCategory);
+                    $state.go('category.category-list', {id: args.editedCategory.parent_id});
+                });
 
                 var _init = function() {
-                    categoryHttpFacade.getAll().then(function(categories) {
-                        categoryService.init(categories);
-                        _select(0);
-                        $scope.$broadcast('CategoriesLoaded');
-                    });
+                    if(!categoryService.isLoaded()) {
+                        categoryHttpFacade.getAll().then(function(categories) {
+                            categoryService.init(categories);
+                            _select($stateParams.id);
+                            $scope.$broadcast('CategoriesLoaded');
+                        });
+                        return;
+                    }
+                    _select($stateParams.id);
                 };
 
                 _init();

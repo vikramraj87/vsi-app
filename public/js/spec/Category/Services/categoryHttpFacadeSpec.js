@@ -1,6 +1,7 @@
 describe('Category HTTP Facade', function() {
     var facade,
-        http;
+        http,
+        Api;
 
     beforeEach(function() {
         module('category');
@@ -82,7 +83,7 @@ describe('Category HTTP Facade', function() {
             "data": {"reason": "CategoryNotFound", "id": 200}
         });
 
-        http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcoma').respond({
+        http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcoma/0').respond({
             "status": "fail",
             "data": {
                 "reason": "CategoryAlreadyExists",
@@ -90,7 +91,7 @@ describe('Category HTTP Facade', function() {
             }
         });
 
-        http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcom').respond(
+        http.when('GET', '/api/categories/check-existence/6/Kaposi%20Sarcom/0').respond(
             {"status": "success", "data": null}
         );
 

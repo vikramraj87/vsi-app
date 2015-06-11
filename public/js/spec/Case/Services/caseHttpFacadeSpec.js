@@ -22,13 +22,15 @@ describe('Case HTTP facade specification', function() {
                                 'id':5,
                                 'case_id':15,
                                 'url':'http:\/\/129.11.191.7\/Research_4\/Teaching\/Education\/Postgraduate\/COW\/COW5\/204049.svs',
-                                'stain':'HE'
+                                'stain':'HE',
+                                'remarks': null
                             },
                             {
                                 'id':6,
                                 'case_id':15,
                                 'url':'http:\/\/129.11.191.7\/Research_4\/Teaching\/Education\/Postgraduate\/COW\/COW5\/204054.svs',
-                                'stain':'HHV8'
+                                'stain':'HHV8',
+                                'remarks': null
                             }
                         ],
                     'provider': {
@@ -52,7 +54,8 @@ describe('Case HTTP facade specification', function() {
                                 'id':22,
                                 'case_id':23,
                                 'url':'http:\/\/rosai.secondslide.com\/sem1467\/sem1467-case16.svs\/',
-                                'stain':'HE'
+                                'stain':'HE',
+                                'remarks': null
                             }
                         ],
                     'provider':{
@@ -75,7 +78,8 @@ describe('Case HTTP facade specification', function() {
                             'id':23,
                             'case_id':24,
                             'url':'http:\/\/rosai.secondslide.com\/sem549\/sem549-case7.svs',
-                            'stain':'HE'
+                            'stain':'HE',
+                            'remarks': null
                         }
                     ],
                     'provider':{
@@ -112,13 +116,15 @@ describe('Case HTTP facade specification', function() {
                         'id':5,
                         'case_id':15,
                         'url':'http:\/\/129.11.191.7\/Research_4\/Teaching\/Education\/Postgraduate\/COW\/COW5\/204049.svs',
-                        'stain':'HE'
+                        'stain':'HE',
+                        'remarks': null
                     },
                     {
                         'id':6,
                         'case_id':15,
                         'url':'http:\/\/129.11.191.7\/Research_4\/Teaching\/Education\/Postgraduate\/COW\/COW5\/204054.svs',
-                        'stain':'HHV8'
+                        'stain':'HHV8',
+                        'remarks': null
                     }
                 ],
                 'provider':{
@@ -141,19 +147,19 @@ describe('Case HTTP facade specification', function() {
             }
         });
 
-        httpBackend.when('POST', '/api/cases', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa').respond({
+        httpBackend.when('POST', '/api/cases', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa&remarks%5B%5D=HE+of+kaposi+sarcoma+of+esophagus&remarks%5B%5D=Giemsa+of+kaposi+sarcoma+of+esophagus').respond({
             'status': 'success',
             'data': {
                 'id': 101
             }
         })
 
-        httpBackend.when('PUT', '/api/cases/102', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa&slide_id%5B%5D=103&slide_id%5B%5D=104').respond({
+        httpBackend.when('PUT', '/api/cases/102', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa&remarks%5B%5D=HE+of+kaposi+sarcoma+of+esophagus&remarks%5B%5D=Giemsa+of+kaposi+sarcoma+of+esophagus&slide_id%5B%5D=103&slide_id%5B%5D=104').respond({
             'status': 'success',
             'data': null
         })
 
-        httpBackend.when('PUT', '/api/cases/103', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa&slide_id%5B%5D=103&slide_id%5B%5D=104').respond({
+        httpBackend.when('PUT', '/api/cases/103', 'clinical_data=Lesion+esophagus&virtual_slide_provider_id=2&category_id=7&url%5B%5D=http%3A%2F%2Fgoogle.com&url%5B%5D=http%3A%2F%2Fyahoo.com&stain%5B%5D=HE&stain%5B%5D=Giemsa&remarks%5B%5D=HE+of+kaposi+sarcoma+of+esophagus&remarks%5B%5D=Giemsa+of+kaposi+sarcoma+of+esophagus&slide_id%5B%5D=103&slide_id%5B%5D=104').respond({
             'status': 'fail',
             'data': {
                 'reason': 'CaseNotFound',
@@ -227,6 +233,7 @@ describe('Case HTTP facade specification', function() {
         var feedback;
         var virtualCase = {};
 
+        virtualCase.id = 0;
         virtualCase.clinicalData = 'Lesion esophagus';
         virtualCase.virtualSlideProviderId = 2;
         virtualCase.categoryId = 7;
@@ -234,11 +241,13 @@ describe('Case HTTP facade specification', function() {
         virtualCase.slides = [];
         virtualCase.slides.push({
             'url': 'http://google.com',
-            'stain': 'HE'
+            'stain': 'HE',
+            'remarks': 'HE of kaposi sarcoma of esophagus'
         });
         virtualCase.slides.push({
             'url': 'http://yahoo.com',
-            'stain': 'Giemsa'
+            'stain': 'Giemsa',
+            'remarks': 'Giemsa of kaposi sarcoma of esophagus'
         })
 
         facade.save(virtualCase).then(function(data) {
@@ -261,12 +270,15 @@ describe('Case HTTP facade specification', function() {
         virtualCase.slides.push({
             'id': 103,
             'url': 'http://google.com',
-            'stain': 'HE'
+            'stain': 'HE',
+            'remarks': 'HE of kaposi sarcoma of esophagus'
+
         });
         virtualCase.slides.push({
             'id': 104,
             'url': 'http://yahoo.com',
-            'stain': 'Giemsa'
+            'stain': 'Giemsa',
+            'remarks': 'Giemsa of kaposi sarcoma of esophagus'
         })
 
         facade.save(virtualCase).then(function(data) {
@@ -289,12 +301,14 @@ describe('Case HTTP facade specification', function() {
         virtualCase.slides.push({
             'id': 103,
             'url': 'http://google.com',
-            'stain': 'HE'
+            'stain': 'HE',
+            'remarks': 'HE of kaposi sarcoma of esophagus'
         });
         virtualCase.slides.push({
             'id': 104,
             'url': 'http://yahoo.com',
-            'stain': 'Giemsa'
+            'stain': 'Giemsa',
+            'remarks': 'Giemsa of kaposi sarcoma of esophagus'
         })
 
         facade.save(virtualCase).then(function(data) {

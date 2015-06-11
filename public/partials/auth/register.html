@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">New User</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form" role="form" novalidate ng-submit="register()" name="registerForm">
+                        <div class="form-group" ng-class="{'has-error': (registerForm.nameField.$dirty || registerForm.$submitted) && registerForm.nameField.$invalid}">
+                            <label class="control-label">Name</label>
+                            <input type="text" class="form-control" name="nameField" ng-required="true" ng-model="user.name">
+                            <span class="help-block" ng-show="(registerForm.nameField.$dirty || registerForm.$submitted) && registerForm.nameField.$error.required">Please enter your full name</span>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': (registerForm.emailField.$dirty || registerForm.$submitted) && registerForm.emailField.$invalid}">
+                            <label class="control-label">E-Mail Address</label>
+                            <input type="email" class="form-control" name="emailField" ng-required="true" kv-unique-email
+                                   ng-model="user.email" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}">
+                            <span class="help-block" ng-show="(registerForm.emailField.$dirty || registerForm.$submitted) && registerForm.emailField.$error.required">Please enter your email address</span>
+                            <span class="help-block" ng-show="(registerForm.emailField.$dirty || registerForm.$submitted) && registerForm.emailField.$error.unique">Email already registered with us</span>
+                            <span class="help-block" ng-show="(registerForm.emailField.$dirty || registerForm.$submitted) && registerForm.emailField.$error.email">Please provide a valid email address</span>
+                        </div>
+
+                        <div class="password" ng-model="user.password" kv-password-confirm>
+                            <div class="form-group" ng-class="{'has-error': (registerForm.passwordField.$dirty || registerForm.$submitted) && registerForm.passwordField.$invalid}">
+                                <label class="control-label">Password</label>
+                                <input type="password" class="form-control" name="passwordField"
+                                       ng-required="true" ng-model="user.password.first" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}">
+                                <span class="help-block" ng-show="(registerForm.passwordField.$dirty || registerForm.$submitted) && registerForm.passwordField.$error.required">Please provide a password</span>
+                            </div>
+
+                            <div class="form-group" ng-class="{'has-error': (registerForm.passwordConfirmationField.$dirty || registerForm.$submitted) && (registerForm.passwordConfirmationField.$invalid || registerForm.$error.confirm)}">
+                                <label class="control-label">Confirm Password</label>
+                                <input type="password" class="form-control" name="passwordConfirmationField"
+                                       ng-required="true" ng-model="user.password.confirm" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}">
+                                <span class="help-block" ng-show="(registerForm.passwordConfirmationField.$dirty || registerForm.$submitted) && registerForm.passwordConfirmationField.$error.required">Please reneter your password</span>
+                                <span class="help-block" ng-show="(registerForm.passwordConfirmationField.$dirty || registerForm.$submitted) && registerForm.$error.confirm">The passwords didn't match</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    Register
+                                </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -14,11 +14,13 @@ class SlideController extends Controller {
     function __construct(SlideRepository $slideRepository)
     {
         $this->slideRepository = $slideRepository;
+        $this->middleware('admin', ['only' => 'checkUrl']);
     }
 
-    public function checkUrl(Request $request)
+    public function checkUrl(Request $request, $exceptId = 0)
     {
         $url = $request->get('url');
+        $exceptId = intval($exceptId);
 
         if("" === $url) {
             return response()->jsend('success');
@@ -27,6 +29,9 @@ class SlideController extends Controller {
         $slide = $this->slideRepository->fetchByUrl($url);
 
         if(null === $slide) {
+            return response()->jsend('success');
+        }
+        if($exceptId !== 0 && $slide->id === $exceptId) {
             return response()->jsend('success');
         }
         return response()->jsend('fail', [
