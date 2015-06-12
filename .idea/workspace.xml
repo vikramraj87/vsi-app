@@ -2,59 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="690fe13d-e231-44f5-94bf-29730c4ab794" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/Http/Requests/CreateCaseRequest.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/Http/Requests/CreateCategoryRequest.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/Http/Requests/UpdateCaseRequest.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/Http/Requests/UpdateCategoryRequest.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/seeds/CategoryTableSeeder.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database/seeds/VirtualSlideProviderTableSeeder.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/resources/views/test/test.blade.php" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.sass-cache/4bf201d238f9b42af54abafed653175c0780c436/app.scssc" afterPath="$PROJECT_DIR$/.sass-cache/4bf201d238f9b42af54abafed653175c0780c436/app.scssc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" afterPath="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/migrations/2015_05_04_194729_create_cases_table.php" afterPath="$PROJECT_DIR$/database/migrations/2015_05_04_194729_create_cases_table.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/CaseController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/CaseController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/CategoryController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/CategoryController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" afterPath="$PROJECT_DIR$/database/seeds/DatabaseSeeder.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/IndexController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/IndexController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Kernel.php" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" afterPath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/SlideController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/SlideController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Kivi/Repositories/SlideRepository.php" afterPath="$PROJECT_DIR$/app/Kivi/Repositories/SlideRepository.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/User.php" afterPath="$PROJECT_DIR$/app/User.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/VirtualCase.php" afterPath="$PROJECT_DIR$/app/VirtualCase.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/VirtualSlide.php" afterPath="$PROJECT_DIR$/app/VirtualSlide.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/views/app.blade.php" afterPath="$PROJECT_DIR$/resources/views/app.blade.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/css/app.css.map" afterPath="$PROJECT_DIR$/public/css/app.css.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/css/app.css" afterPath="$PROJECT_DIR$/public/css/app.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/app.js" afterPath="$PROJECT_DIR$/public/js/src/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/assets/sass/app.scss" afterPath="$PROJECT_DIR$/resources/assets/sass/app.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bower.json" afterPath="$PROJECT_DIR$/bower.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Case/Services/caseHttpFacade.js" afterPath="$PROJECT_DIR$/public/js/src/Case/Services/caseHttpFacade.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/spec/Case/Services/caseHttpFacadeSpec.js" afterPath="$PROJECT_DIR$/public/js/spec/Case/Services/caseHttpFacadeSpec.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Category/Controllers/categoryController.js" afterPath="$PROJECT_DIR$/public/js/src/Category/Controllers/categoryController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/spec/Category/Controllers/categoryControllerSpec.js" afterPath="$PROJECT_DIR$/public/js/spec/Category/Controllers/categoryControllerSpec.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Category/Services/categoryHttpFacade.js" afterPath="$PROJECT_DIR$/public/js/src/Category/Services/categoryHttpFacade.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/spec/Category/Services/categoryHttpFacadeSpec.js" afterPath="$PROJECT_DIR$/public/js/spec/Category/Services/categoryHttpFacadeSpec.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.json" afterPath="$PROJECT_DIR$/composer.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/composer.lock" afterPath="$PROJECT_DIR$/composer.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/partials/case/edit.html" afterPath="$PROJECT_DIR$/public/partials/case/edit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/partials/category/edit.html" afterPath="$PROJECT_DIR$/public/partials/category/edit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Case/Controllers/editController.js" afterPath="$PROJECT_DIR$/public/js/src/Case/Controllers/editController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Category/Controllers/editController.js" afterPath="$PROJECT_DIR$/public/js/src/Category/Controllers/editController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gruntfile.js" afterPath="$PROJECT_DIR$/gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/views/index/index.php" afterPath="$PROJECT_DIR$/resources/views/index/index.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/karma.conf.js" afterPath="$PROJECT_DIR$/karma.conf.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Case/Directives/kvUniqueUrl.js" afterPath="$PROJECT_DIR$/public/js/src/Case/Directives/kvUniqueUrl.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/partials/case/list.html" afterPath="$PROJECT_DIR$/public/partials/case/list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/partials/category/list.html" afterPath="$PROJECT_DIR$/public/partials/category/list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Case/Controllers/listController.js" afterPath="$PROJECT_DIR$/public/js/src/Case/Controllers/listController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Category/Controllers/listController.js" afterPath="$PROJECT_DIR$/public/js/src/Category/Controllers/listController.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/routes.php" afterPath="$PROJECT_DIR$/app/Http/routes.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/src/Case/Services/slideHttpFacade.js" afterPath="$PROJECT_DIR$/public/js/src/Case/Services/slideHttpFacade.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/spec/Case/Services/slideHttpFacadeSpec.js" afterPath="$PROJECT_DIR$/public/js/spec/Case/Services/slideHttpFacadeSpec.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/js/vendor.js" afterPath="$PROJECT_DIR$/public/js/vendor.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="vsi-app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -132,8 +80,8 @@
       <file leaf-file-name="list.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/partials/case/list.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.55739975" vertical-offset="155" max-vertical-offset="1550">
-              <caret line="18" column="60" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
+            <state vertical-scroll-proportion="1.1576763" vertical-offset="0" max-vertical-offset="1581">
+              <caret line="27" column="68" selection-start-line="27" selection-start-column="68" selection-end-line="27" selection-end-column="68" />
               <folding />
             </state>
           </provider>
@@ -1132,8 +1080,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/partials/case/list.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55739975" vertical-offset="155" max-vertical-offset="1550">
-          <caret line="18" column="60" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
+        <state vertical-scroll-proportion="1.1576763" vertical-offset="0" max-vertical-offset="1581">
+          <caret line="27" column="68" selection-start-line="27" selection-start-column="68" selection-end-line="27" selection-end-column="68" />
           <folding />
         </state>
       </provider>

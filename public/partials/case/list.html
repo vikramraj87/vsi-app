@@ -23,7 +23,8 @@
                     <tr ng-repeat="case in cases">
                         <td><a ui-sref="category.case-edit({id: case.category.id, caseId: case.id})" ng-if="checkAccess('category.case-edit')"><span class="glyphicon glyphicon-edit"></span></a></td>
                         <td ng-show="children.length"><a ui-sref="category.case-list({id: case.category.id })" ng-bind="case.category.category"></a></td>
-                        <td ng-bind="case.clinical_data" ng-show="!children.length"></td>
+                        <td ng-bind="case.clinical_data" ng-show="!children.length && case.clinical_data"></td>
+                        <td ng-show="!children.length && !case.clinical_data">No clinical data available</td>
                         <td><a ng-href="{{ case.provider.url }}" ng-bind="case.provider.name" target="_blank"></a></td>
                         <td>
                             <a ng-repeat="slide in case.slides" ng-href="{{ slide.url }}" target="_blank"><img ng-src="{{ slide.url }}?0+0+0+80" ng-bind="slide.stain" target="_blank" class="img-thumbnail slide-img"/></a>
