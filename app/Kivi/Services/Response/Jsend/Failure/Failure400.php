@@ -7,12 +7,9 @@ class Failure400 extends Failure {
 
     public function __construct(array $validationErrors = [])
     {
-        $this->content = [
-            'status' => 'fail',
-            'data' => [
-                'reason' => 'ValidationFailed',
-                'errors' => $validationErrors
-            ]
+        $this->data = [
+            'reason' => 'ValidationFailed',
+            'errors' => $validationErrors
         ];
     }
 } 

@@ -7,12 +7,9 @@ class Failure404 extends Failure {
 
     function __construct($id)
     {
-        $this->content = [
-            'status' => 'fail',
-            'data' => [
-                'reason' => 'NotFound',
-                'id' => $id
-            ]
+        $this->data = [
+            'reason' => 'NotFound',
+            'id' => $id
         ];
     }
 } 

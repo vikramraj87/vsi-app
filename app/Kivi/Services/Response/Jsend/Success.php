@@ -3,11 +3,10 @@
 use Kivi\Services\Response\Jsend;
 
 abstract class Success extends Jsend {
+    protected $status = 'success';
+
     function __construct(array $data = [])
     {
-        $this->content = [
-            'status' => 'success',
-            'data' => $data
-        ];
+        $this->data = $data;
     }
 } 

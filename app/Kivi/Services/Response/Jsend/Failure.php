@@ -3,5 +3,5 @@
 use Kivi\Services\Response\Jsend;
 
 abstract class Failure extends Jsend {
-
+    protected $status = 'fail';
 } 

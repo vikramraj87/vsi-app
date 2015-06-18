@@ -1,12 +1,19 @@
 <?php  namespace Kivi\Services\Response;
 
 abstract class Jsend {
+    /** @var int HTTP status code */
     protected $statusCode = 0;
 
-    protected $content = [];
+    /** @var string Indicating success or failure of JSON response */
+    protected $status = '';
+
+    /** @var array Holding the response data */
+    protected $data;
 
     /**
-     * @return integer
+     * Returns the HTTP status code
+     *
+     * @return int
      */
     public function statusCode()
     {
@@ -14,11 +21,16 @@ abstract class Jsend {
     }
 
     /**
+     * Returns the response array for JSON response
+     *
      * @return array
      */
     public function content()
     {
-        return $this->content;
+        return [
+            'status' => $this->status,
+            'data' => $this->data
+        ];
     }
 
 

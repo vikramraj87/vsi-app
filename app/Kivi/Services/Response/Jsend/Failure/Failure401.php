@@ -8,11 +8,8 @@ class Failure401 extends Failure {
 
     function __construct()
     {
-        $this->content = [
-            'status' => 'fail',
-            'data' => [
-                'reason' => 'Unauthorized'
-            ]
+        $this->data = [
+            'reason' => 'Unauthorized'
         ];
     }
 }

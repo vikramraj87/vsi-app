@@ -7,11 +7,8 @@ class Failure409 extends Failure {
 
     function __construct()
     {
-        $this->content = [
-            'status' => 'fail',
-            'data' => [
-                'reason' => 'DuplicateEntry'
-            ]
+        $this->data = [
+            'reason' => 'DuplicateEntry'
         ];
     }
 } 
