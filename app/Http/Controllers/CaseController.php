@@ -30,7 +30,7 @@ class CaseController extends Controller {
         $this->virtualSlideProviderRepository = $virtualSlideProviderRepository;
         $this->caseRepository                 = $caseRepository;
 
-        $this->middleware('admin', ['except' => 'index']);
+        $this->middleware('atleast_moderator', ['except' => 'index']);
     }
 
     /**
@@ -212,25 +212,41 @@ class CaseController extends Controller {
 
     private function getValidator(Request $request)
     {
+        return Validator::make($request->all(), $this->getValidationRules($request));
+    }
+
+    private function getValidationRules(Request $request)
+    {
         $rules = [
             'virtual_slide_provider_id' => 'required|integer|exists:virtual_slide_providers,id',
             'clinical_data' => 'string',
             'category_id' => 'required|integer|exists:categories,id'
         ];
 
+        $urlRule = 'required|url|unique:virtual_slides,url,';
+        $stainRule = 'required';
+        $remarksRule = 'string';
+
+        if(! is_array($request->get('url'))) {
+            $rules['url.0'] = $urlRule;
+            $rules['stain.0'] = $stainRule;
+            $rules['remarks.0'] = $remarksRule;
+
+            return $rules;
+        }
         foreach ($request->get('url') as $key => $val) {
             $exceptId = $request->exists('slide_id') ? $request->get('slide_id')[$key] : '';
-            $rules['url.' . $key] = 'required|url|unique:virtual_slides,url,' . $exceptId;
+            $rules['url.' . $key] = $urlRule . $exceptId;
         }
 
         foreach ($request->get('stain') as $key => $val) {
-            $rules['stain.' . $key] = 'required';
+            $rules['stain.' . $key] = $stainRule;
         }
 
         foreach ($request->get('remarks') as $key => $val) {
-            $rules['remarks.' . $key] = 'string';
+            $rules['remarks.' . $key] = $remarksRule;
         }
 
-        return Validator::make($request->all(), $rules);
+        return $rules;
     }
 }

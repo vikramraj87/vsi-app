@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Kivi\Repositories\CategoryRepository;
 
+use Kivi\Services\Response\Jsend\Failure\Failure400;
+use Kivi\Services\Response\Jsend\Failure\Failure409;
+use Kivi\Services\Response\Jsend\Failure\Failure404;
+
+use Kivi\Services\Response\Jsend\Success\Success201;
+use Kivi\Services\Response\Jsend\Success\Success200;
+
+
 class CategoryController extends Controller {
 
     /** @var CategoryRepository */
@@ -21,7 +29,7 @@ class CategoryController extends Controller {
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
-        $this->middleware('admin', ['except' => 'index']);
+        $this->middleware('atleast_moderator', ['except' => 'index']);
     }
 
     /**
@@ -33,7 +41,7 @@ class CategoryController extends Controller {
     public function index()
     {
         $categories = $this->categoryRepository->all();
-        return response()->jsend('success', $categories);
+        return response()->jsend(new Success200($categories->toArray()));
     }
 
     public function show($id)
@@ -41,12 +49,9 @@ class CategoryController extends Controller {
         $id = intval($id);
         $category = $this->categoryRepository->find($id);
         if(null === $category) {
-            return response()->jsend('fail', [
-                'reason' => 'CategoryNotFound',
-                'id' => $id
-            ]);
+            return response()->jsend(new Failure404($id));
         }
-        return response()->jsend('success', $category);
+        return response()->jsend(new Success200($category->toArray()));
     }
 
     /**
@@ -57,16 +62,10 @@ class CategoryController extends Controller {
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'parent_id' => 'required|integer|exists:categories,id',
-            'category'  => 'required|string|unique_with:categories,parent_id'
-        ]);
+        $validator = $this->validator($request);
 
         if($validator->fails()) {
-            return response()->jsend('fail', [
-                'reason' => 'ValidationFailed',
-                'errors' => $validator->errors()->all()
-            ]);
+            return response()->jsend(new Failure400($validator->errors()->all()));
         }
 
         $data = [
@@ -74,13 +73,18 @@ class CategoryController extends Controller {
             'category'  => $request->get('category')
         ];
 
+        $exists = $this->categoryRepository->fetchByParentIdAndCategory($data['parent_id'], $data['category']);
+        if(count($exists)) {
+            return response()->jsend(new Failure409());
+        }
+
         $savedCategory = $this->categoryRepository->create($data);
 
         if($savedCategory->exists('id')) {
-            return response()->jsend('success', $savedCategory->toArray());
+            return response()->jsend(new Success201($savedCategory->toArray()));
         }
 
-        return response()->jsend('fail');
+        return response()->jsend(new Failure400([]));
     }
 
     /**
@@ -93,15 +97,57 @@ class CategoryController extends Controller {
     {
         $id = intval($id);
         $category = $this->categoryRepository->find($id);
+
         if(null === $category) {
-            return response()->jsend('fail', [
-                'reason' => 'CategoryNotFound',
-                'id' => $id
-            ]);
+            return response()->jsend(new Failure404($id));
         }
+
+        $validator = $this->validator($request, $id);
+
+        if($validator->fails()) {
+            return response()->jsend(new Failure400($validator->errors()->all()));
+        }
+
+        $exists = $this->categoryRepository->fetchByParentIdAndCategory($request->get('parent_id'), $request->get('category'));
+        if($exists && $exists->id !== $id) {
+            return response()->jsend(new Failure409());
+        }
+
+        $category->parent_id = $request->get('parent_id') == 0 ? null : intval($request->get('parent_id'));
+        $category->category = $request->get('category');
+
+        $result = $this->categoryRepository->update($category);
+
+        if(false === $result) {
+            return response()->jsend(new Failure400());
+        }
+
+        return response()->jsend(new Success200($category->toArray()));
+    }
+
+    public function check($parentId = 0, $categoryName = "", $exclude = 0)
+    {
+        if(0 === $parentId || "" === $categoryName) {
+            return response()->jsend(new Success200());
+        }
+        $exclude = intval($exclude);
+        $category = $this->categoryRepository->fetchByParentIdAndCategory($parentId, $categoryName);
+        if(null === $category || $category->id === $exclude) {
+            return response()->jsend(new Success200());
+        }
+        return response()->jsend(new Failure409());
+    }
+
+    /**
+     * @param Request $request
+     * @param integer $id
+     * @return mixed
+     */
+    private function validator(Request $request, $id = 0)
+    {
         $validator = Validator::make($request->all(), [
             'parent_id' => 'required|integer|exists:categories,id',
-            'category'  => 'required|string|unique_with:categories,parent_id,' . $id
+            'category' => 'required|string'
         ]);
 
         $validator->after(function($validator) use($request, $id) {
@@ -110,50 +156,6 @@ class CategoryController extends Controller {
             }
         });
 
-        if($validator->fails()) {
-            return response()->jsend('fail', [
-                'reason' => 'ValidationFailed',
-                'errors' => $validator->errors()->all()
-            ]);
-        }
-
-
-        $category->parent_id = $request->get('parent_id') == 0 ? null : intval($request->get('parent_id'));
-        $category->category = $request->get('category');
-
-        $result = $this->categoryRepository->update($category);
-
-        if(false === $result) {
-            return response()->jsend('fail');
-        }
-
-        return response()->jsend('success', $category);
-    }
-
-
-//    public function destroy($id)
-//    {
-//        /** @var Category $category */
-//        $category = $this->categoryRepository->find($id);
-//        $redirectUrl = $category->parent_id == null ?
-//                            'categories' : 'categories/' . $category->parent_id;
-//        $category->delete();
-//        return redirect($redirectUrl);
-//    }
-
-    public function check($parentId = 0, $categoryName = "", $exclude = 0)
-    {
-        if(0 === $parentId || "" === $categoryName) {
-            return response()->jsend('success');
-        }
-        $exclude = intval($exclude);
-        $category = $this->categoryRepository->fetchByParentIdAndCategory($parentId, $categoryName);
-        if(null === $category || $category->id === $exclude) {
-            return response()->jsend('success');
-        }
-        return response()->jsend('fail', [
-            'reason' => 'CategoryAlreadyExists',
-            'category' => $category
-        ]);
+        return $validator;
     }
 }

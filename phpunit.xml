@@ -7,11 +7,14 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
+         stopOnFailure="true"
          syntaxCheck="false">
     <testsuites>
-        <testsuite name="Application Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Unit">
+            <directory>./tests/unit</directory>
+        </testsuite>
+        <testsuite name="Integrated">
+            <directory>./tests/integrated/</directory>
         </testsuite>
     </testsuites>
     <php>
@@ -19,5 +22,9 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+
+        <env name="DB_DATABASE" value="test" />
+        <env name="DB_PORT" value="33060" />
+        <env name="DB_HOST" value="127.0.0.1" />
     </php>
 </phpunit>

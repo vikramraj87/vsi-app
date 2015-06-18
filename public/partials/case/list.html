@@ -17,7 +17,7 @@
                     <tbody>
                     <tr ng-if="checkAccess('category.case-create') && category">
                         <td colspan="5" class="text-center">
-                            <a ui-sref="category.case-create(category.id)" class="btn btn-primary">Create new digital case</a>
+                            <a ui-sref="category.case-create({id: category.id})" class="btn btn-primary">Create new digital case</a>
                         </td>
                     </tr>
                     <tr ng-repeat="case in cases">

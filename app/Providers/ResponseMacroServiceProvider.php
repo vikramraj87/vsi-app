@@ -1,37 +1,17 @@
 <?php  namespace App\Providers;
 
+use Kivi\Services\Response\Jsend;
 use Response;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
-class ResponseMacroServiceProvider extends ServiceProvider{
+class ResponseMacroServiceProvider extends ServiceProvider {
 
-    public function boot()
+    public function boot(ResponseFactory $factory)
     {
-        Response::macro('jsend', function($status, $data = null, $message = null, $code = null) {
-            switch($status) {
-                case 'success':
-                case 'fail':
-                    $content = [
-                        'status' => $status,
-                        'data'   => $data
-                    ];
-                    break;
-                default:
-                    $content = [
-                        'status' => 'error',
-                        'message' => $message
-                    ];
-                    if($data !== null) {
-                        $content['data'] = $data;
-                    }
-                    if($code !== null) {
-                        $content['code'] = $code;
-                    }
-                    break;
-            }
-            $response = Response::make($content);
-            $response->header('Content-Type', 'application/json');
-            return $response;
+        $factory->macro('jsend', function(Jsend $jsend) use ($factory) {
+            return $factory->make($jsend->content(), $jsend->statusCode())
+                        ->header('Content-Type', 'application/json');
         });
     }
 

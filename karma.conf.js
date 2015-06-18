@@ -1,11 +1,17 @@
 // Karma configuration
 // Generated on Tue May 26 2015 23:02:07 GMT+0530 (IST)
+var requiredFiles = [
+    'bower/jquery/dist/jquery.min.js',
+    'bower/angular/angular.min.js',
+    'bower/angular-mocks/angular-mocks.js',
+    'bower/angular-ui-router/release/angular-ui-router.min.js'
+];
 
 module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: 'resources/assets/',
 
 
     // frameworks to use
@@ -15,34 +21,36 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        'resources/assets/bower/jquery/dist/jquery.min.js',
-        'resources/assets/bower/angular/angular.min.js',
-        'resources/assets/bower/angular-mocks/angular-mocks.js',
+        'bower/jquery/dist/jquery.min.js',
+        'bower/angular/angular.min.js',
+        'bower/angular-mocks/angular-mocks.js',
+        'bower/angular-ui-router/release/angular-ui-router.min.js',
 
-        'public/js/src/app.js',
+        'js/src/app.js',
 
-        'public/js/src/Case/Services/caseHttpFacade.js',
-        'public/js/spec/Case/Services/caseHttpFacadeSpec.js',
+        'js/src/Case/Services/caseHttpFacade.js',
+        'js/spec/Case/Services/caseHttpFacadeSpec.js',
 
-        'public/js/src/Case/Services/slideHttpFacade.js',
-        'public/js/spec/Case/Services/slideHttpFacadeSpec.js',
+        'js/src/Case/Services/slideHttpFacade.js',
+        'js/spec/Case/Services/slideHttpFacadeSpec.js',
 
-        'public/js/src/Category/Services/categoryHttpFacade.js',
-        'public/js/spec/Category/Services/categoryHttpFacadeSpec.js',
+        'js/src/Category/Services/categoryHttpFacade.js',
+        'js/spec/Category/Services/categoryHttpFacadeSpec.js',
 
-        'public/js/src/Category/Services/categoryService.js',
-        'public/js/spec/Category/Services/categoryServiceSpec.js',
+        'js/src/Category/Services/categoryService.js',
+        'js/spec/Category/Services/categoryServiceSpec.js',
 
-        'public/js/src/Category/Controllers/categoryController.js',
-        'public/js/spec/Category/Controllers/categoryControllerSpec.js',
+        'js/src/Category/Controllers/categoryController.js',
+        'js/spec/Category/Controllers/categoryControllerSpec.js',
 
-        'public/js/src/Auth/Services/userHttpFacade.js',
-        'public/js/spec/Auth/Services/userHttpFacadeSpec.js',
-        //
-        'public/js/src/Auth/Services/authHttpFacade.js',
-        'public/js/spec/Auth/Services/authHttpFacadeSpec.js',
-        'public/js/src/Auth/Services/authService.js',
-        'public/js/spec/Auth/Services/authServiceSpec.js'
+        'js/src/Auth/Services/userHttpFacade.js',
+        'js/spec/Auth/Services/userHttpFacadeSpec.js',
+        
+        'js/src/Auth/Services/authHttpFacade.js',
+        'js/spec/Auth/Services/authHttpFacadeSpec.js',
+        
+        'js/src/Auth/Services/authService.js',
+        'js/spec/Auth/Services/authServiceSpec.js'
     ],
 
 
@@ -60,7 +68,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
 
     // web server port
@@ -87,6 +95,13 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+    plugins: [
+      'karma-jasmine',
+      'karma-mocha-reporter',
+      'karma-chrome-launcher'
+    ]
+
   });
 };
