@@ -84,37 +84,57 @@ class CategoryApiTest extends IntegratedTestCase
 	}
 
 	/** @test */
-	function it_should_not_allow_an_invalid_category_to_be_created()
+	function it_should_not_allow_a_category_to_be_created_with_empty_data()
 	{
 			$this->be($this->mockModerator());
 
-			// Create a category with empty data
 			$this->post('api/categories', [])
 				->seeStatusCodeIs(400)
 				->seeJsonContains(['status' => 'fail'])
 				->seeJsonContains(['reason' => 'ValidationFailed']);
+    }
 
-			// Create a category with already existing name
-			$this->post('api/categories', ['category' => 'Fat necrosis', 'parent_id' => 8])
-				->seeStatusCodeIs(409)
-				->seeJsonContains(['status' => 'fail'])
-				->seeJsonContains(['reason' => 'DuplicateEntry']);
+    /** @test */
+	function it_should_not_allow_a_category_to_be_created_with_incomplete_data()
+	{
+			$this->be($this->mockModerator());
 
-			// Create a category with invalid name
-			// todo: Implement testing
-			//
-
-			// Create a category with non existing parent id
-			$this->post('api/categories', ['category' => 'Fat necrosis', 'parent_id' => 10001])
-				->seeStatusCodeIs(400)
-				->seeJsonContains(['status' => 'fail'])
-				->seeJsonContains(['reason' => 'ValidationFailed']);
-
-			// Create a category with empty parent_id
 			$this->post('api/categories', ['category' => 'Fat necrosis', 'parent_id' => 0])
 				->seeStatusCodeIs(400)
 				->seeJsonContains(['status' => 'fail'])
 				->seeJsonContains(['reason' => 'ValidationFailed']);
+	}
+
+    /** @test */
+	function it_should_not_allow_a_category_to_be_created_with_duplicate_data()
+	{
+			$this->be($this->mockModerator());
+
+			$this->post('api/categories', ['category' => 'Fat necrosis', 'parent_id' => 8])
+				->seeStatusCodeIs(409)
+				->seeJsonContains(['status' => 'fail'])
+				->seeJsonContains(['reason' => 'DuplicateEntry']);
+    }
+
+    /** @test */
+	function it_should_not_allow_a_category_to_be_created_with_invalid_parent_id()
+	{
+			$this->be($this->mockModerator());
+
+			$this->post('api/categories', ['category' => 'Fat necrosis', 'parent_id' => 10001])
+				->seeStatusCodeIs(400)
+				->seeJsonContains(['status' => 'fail'])
+				->seeJsonContains(['reason' => 'ValidationFailed']);
+	}
+
+    /** @test */
+	function it_should_not_allow_a_category_to_be_created_with_invalid_name()
+	{
+			$this->be($this->mockModerator());
+
+			// Create a category with invalid name
+			// todo: Implement testing
+			//
 	}
 
     /** @test */
@@ -149,43 +169,78 @@ class CategoryApiTest extends IntegratedTestCase
     }
 
     /** @test */
-    function it_should_not_allow_a_moderator_or_admin_to_edit_with_invalid_data()
+    function it_should_display_404_when_trying_to_edit_a_non_existing_category()
     {
     	$this->be($this->mockModerator());
 
         $this->put('api/categories/5001', [])
             ->seeStatusCodeIs(404)
             ->seeJsonEquals(['status' => 'fail', 'data' => ['reason' => 'NotFound', 'id' => 5001]]);
+    }
 
-    	$this->put('api/categories/2', [])
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_with_empty_data()
+    {
+    	$this->be($this->mockModerator());
+
+        $this->put('api/categories/2', [])
     		->seeStatusCodeIs(400)
     		->seeJsonContains(['status' => 'fail'])
     		->seeJsonContains(['reason' => 'ValidationFailed']);
+    }
 
-        // Empty parent id
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_without_parent_id()
+    {
+    	$this->be($this->mockModerator());
+
         $this->put('api/categories/2', ['category' => 'Histopathology', 'parent_id' => 0])
             ->seeStatusCodeIs(400)
             ->seeJsonContains(['status' => 'fail'])
             ->seeJsonContains(['reason' => 'ValidationFailed']);
+    }
 
-        // Non existent parent id
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_with_invalid_parent_id()
+    {
+    	$this->be($this->mockModerator());
+
         $this->put('api/categories/2', ['category' => 'Histopathology', 'parent_id' => 10001])
             ->seeStatusCodeIs(400)
             ->seeJsonContains(['status' => 'fail'])
             ->seeJsonContains(['reason' => 'ValidationFailed']);
+    }
 
-        // Already existing combination
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_with_duplicate_data()
+    {
+    	$this->be($this->mockModerator());
+
         $this->put('api/categories/2', ['category' => 'Nipple adenoma', 'parent_id' => 10])
               ->seeStatusCodeIs(409)
             ->seeJsonContains(['status' => 'fail'])
             ->seeJsonContains(['reason' => 'DuplicateEntry']);
+    }
 
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_with_parent_id_same_as_id()
+    {
+    	$this->be($this->mockModerator());
 
-        // Parent Id specifed as parent for itself
         $this->put('api/categories/2', ['category' => 'Hematopathology', 'parent_id' => 2])
             ->seeStatusCodeIs(400)
             ->seeJsonContains(['status' => 'fail'])
             ->seeJsonContains(['reason' => 'ValidationFailed']);
+
+        // Create a category with invalid name
+        // todo: Implement testing
+        //
+    }
+
+    /** @test */
+    function it_should_not_allow_a_moderator_or_admin_to_edit_with_invalid_name()
+    {
+        $this->be($this->mockModerator());
 
         // Create a category with invalid name
         // todo: Implement testing
