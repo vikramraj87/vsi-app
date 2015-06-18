@@ -3,6 +3,8 @@
 .env
 .idea
 .sass-cache
+.DS_Store
 public/js/*.*
 public/css/*.*
 slidebox.sublime-project
+
