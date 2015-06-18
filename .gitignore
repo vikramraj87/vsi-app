@@ -1,3 +1,8 @@
 /vendor
 /node_modules
 .env
+.idea
+.sass-cache
+public/js/*.*
+public/css/*.*
+slidebox.sublime-project
