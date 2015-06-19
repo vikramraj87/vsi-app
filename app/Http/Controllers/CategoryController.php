@@ -68,18 +68,13 @@ class CategoryController extends Controller {
             return response()->jsend(new Failure400($validator->errors()->all()));
         }
 
-        $data = [
-            'parent_id' => $request->get('parent_id') == 0 ? null : intval($request->get('parent_id')),
-            'category'  => $request->get('category')
-        ];
+        $data = $request->only(['parent_id', 'category']);
 
-        $exists = $this->categoryRepository->fetchByParentIdAndCategory($data['parent_id'], $data['category']);
-        if(count($exists)) {
+        if($this->exists($data['parent_id'], $data['category'])) {
             return response()->jsend(new Failure409());
         }
 
         $savedCategory = $this->categoryRepository->create($data);
-
         if($savedCategory->exists('id')) {
             return response()->jsend(new Success201($savedCategory->toArray()));
         }
@@ -88,7 +83,7 @@ class CategoryController extends Controller {
     }
 
     /**
-     * Updates a category record identified by the id hidden field
+     * Updates a category record
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -108,13 +103,14 @@ class CategoryController extends Controller {
             return response()->jsend(new Failure400($validator->errors()->all()));
         }
 
-        $exists = $this->categoryRepository->fetchByParentIdAndCategory($request->get('parent_id'), $request->get('category'));
-        if($exists && $exists->id !== $id) {
+        $data = $request->only(['category', 'parent_id']);
+
+        if($this->exists($data['parent_id'], $data['category'], $id)) {
             return response()->jsend(new Failure409());
         }
 
-        $category->parent_id = $request->get('parent_id') == 0 ? null : intval($request->get('parent_id'));
-        $category->category = $request->get('category');
+        $category->parent_id = $data['parent_id'];
+        $category->category = $data['category'];
 
         $result = $this->categoryRepository->update($category);
 
@@ -127,15 +123,28 @@ class CategoryController extends Controller {
 
     public function check($parentId = 0, $categoryName = "", $exclude = 0)
     {
-        if(0 === $parentId || "" === $categoryName) {
-            return response()->jsend(new Success200());
+        return $this->exists($parentId, $categoryName, $exclude) ?
+            response()->jsend(new Failure409()) : response()->jsend(new Success200());
+    }
+
+    private function exists($parent_id, $category, $exclude = 0)
+    {
+        $parent_id = intval($parent_id);
+        if(0 === $parent_id || "" === $category) {
+            return false;
         }
+
+        $category = $this->categoryRepository->fetchByParentIdAndCategory($parent_id, $category);
+        if(null === $category) {
+            return false;
+        }
+
         $exclude = intval($exclude);
-        $category = $this->categoryRepository->fetchByParentIdAndCategory($parentId, $categoryName);
-        if(null === $category || $category->id === $exclude) {
-            return response()->jsend(new Success200());
+        if($exclude && $category->id === $exclude) {
+            return false;
         }
-        return response()->jsend(new Failure409());
+
+        return true;
     }
 
     /**

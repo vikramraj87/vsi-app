@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Kivi\Repositories\CategoryRepository;
 use Kivi\Repositories\VirtualSlideProviderRepository;
 use Kivi\Repositories\CaseRepository;
+use Kivi\Services\Response\Jsend\Failure\Failure404;
+use Kivi\Services\Response\Jsend\Success\Success200;
 
 class CaseController extends Controller {
     /** @var VirtualSlideProviderRepository */
@@ -47,16 +49,13 @@ class CaseController extends Controller {
         $category = $this->categoryRepository->find($parentId);
 
         if(null === $category && $parentId !== 0) {
-            return response()->jsend('fail', [
-                'reason' => 'CategoryNotFound',
-                'id' => $parentId
-            ]);
+            return response()->jsend(new Failure404($parentId));
         }
 
         $hierarchicalCategories = $this->categoryRepository->hierarchicalCategoryIds($parentId);
-        $cases                  = $this->caseRepository->casesByCategories($hierarchicalCategories);
+        $cases = $this->caseRepository->casesByCategories($hierarchicalCategories);
 
-        return response()->jsend('success', $cases);
+        return response()->jsend(new Success200($cases->toArray()));
     }
 
     /**
@@ -67,16 +66,14 @@ class CaseController extends Controller {
      */
     public function show($id)
     {
+        $id = intval($id);
         $case = $this->caseRepository->find($id);
 
         if(null === $case) {
-            return response()->jsend('fail', [
-                'reason' => 'CaseNotFound',
-                'id' => $id
-            ]);
+            return response()->jsend(new Failure404($id));
         }
 
-        return response()->jsend('success', $case);
+        return response()->jsend(new Success200($case->toArray()));
     }
 
     /**

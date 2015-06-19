@@ -296,11 +296,21 @@ class CategoryApiTest extends IntegratedTestCase
             ->seeStatusCodeIs(409)
             ->seeJsonContains(['status' => 'fail'])
             ->seeJsonContains(['reason' => 'DuplicateEntry']);
+    }
 
+    /** @test */
+    function it_should_allow_a_moderator_to_check_existence_of_category_while_excluding_current_category()
+    {
+        $this->be($this->mockModerator());
         $this->get('api/categories/check-existence/1/Breast/4')
             ->seeStatusCodeIs(200)
             ->seeJsonEquals(['status' => 'success', 'data' => []]);
+    }
 
+    /** @test */
+    function it_should_allow_a_moderator_to_check_existence_of_non_existent_category()
+    {
+        $this->be($this->mockModerator());
         $this->get('api/categories/check-existence/2/Breast')
             ->seeStatusCodeIs(200)
             ->seeJsonEquals(['status' => 'success', 'data' => []]);

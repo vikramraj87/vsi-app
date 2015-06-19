@@ -6,56 +6,59 @@ class CaseApiTest extends IntegratedTestCase {
     use DatabaseTransactions;
 
     /** @test */
-    function it_should_pass()
+    function it_should_allow_anyone_to_fetch_all_cases()
     {
-        $this->assertTrue(true);
+        $this->get('api/cases')
+            ->seeStatusCodeIs(200)
+            ->seeJsonContains(['status' => 'success']);
     }
-//    /** @test */
-//    function it_should_allow_anyone_to_fetch_all_cases()
-//    {
-//        $this->get('api/cases')
-//            ->seeStatusCodeIs(200)
-//            ->seeJsonContains(['status' => 'success']);
-//    }
-//
-//    /** @test */
-//    function it_should_allow_anyone_to_fetch_cases_by_categories()
-//    {
-//        $this->get('api/cases/category/1')
-//            ->seeStatusCodeIs(200)
-//            ->seeJsonContains(['status' => 'success']);
-//    }
-//
-//    /** @test */
-//    function it_should_not_allow_a_guest_to_fetch_a_single_case()
-//    {
-//        $this->get('api/cases/2')
-//            ->seeStatusCodeIs(401)
-//            ->seeJsonContains(['status' => 'fail'])
-//            ->seeJsoNContains(['reason' => 'Unauthorized']);
-//    }
-//
-//    /** @test */
-//    function it_should_not_allow_an_user_to_fetch_a_single_case()
-//    {
-//        $this->be($this->mockUser());
-//
-//        $this->get('api/cases/2')
-//            ->seeStatusCodeIs(401)
-//            ->seeJsonContains(['status' => 'fail'])
-//            ->seeJsoNContains(['reason' => 'Unauthorized']);
-//    }
-//
-//    /** @test */
-//    function it_should_allow_a_moderator_to_fetch_a_single_case()
-//    {
-//        $this->be($this->mockModerator());
-//
-//        $this->get('api/cases/2')
-//            ->seeStatusCodeIs(200)
-//            ->seeJsonContains(['status' => 'success'])
-//            ->seeJsonContains(['id' => 2]);
-//    }
+
+    /** @test */
+    function it_should_allow_anyone_to_fetch_cases_by_categories()
+    {
+        $this->get('api/cases/category/1')
+            ->seeStatusCodeIs(200)
+            ->seeJsonContains(['status' => 'success']);
+    }
+
+    /** @test */
+    function it_should_not_allow_a_guest_to_fetch_a_single_case()
+    {
+        $this->get('api/cases/2')
+            ->seeStatusCodeIs(401)
+            ->seeJsonEquals(['status' => 'fail', 'data' => ['reason' => 'Unauthorized']]);
+    }
+
+    /** @test */
+    function it_should_not_allow_an_user_to_fetch_a_single_case()
+    {
+        $this->be($this->mockUser());
+
+        $this->get('api/cases/2')
+            ->seeStatusCodeIs(401)
+            ->seeJsonEquals(['status' => 'fail', 'data' => ['reason' => 'Unauthorized']]);
+    }
+
+    /** @test */
+    function it_should_display_404_when_trying_to_get_non_existent_case()
+    {
+        $this->be($this->mockModerator());
+
+        $this->get('api/cases/5001')
+            ->seeStatusCodeIs(404)
+            ->seeJsonEquals(['status' => 'fail', 'data' => ['reason' => 'NotFound', 'id' => 5001]]);
+    }
+    
+    /** @test */
+    function it_should_allow_a_moderator_to_fetch_a_single_case()
+    {
+        $this->be($this->mockModerator());
+
+        $this->get('api/cases/2')
+            ->seeStatusCodeIs(200)
+            ->seeJsonContains(['status' => 'success'])
+            ->seeJsonContains(['id' => 2]);
+    }
 //
 //    /** @test */
 //    function it_should_allow_an_admin_to_fetch_a_single_case()
