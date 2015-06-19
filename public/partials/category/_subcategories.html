@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Sub-categories <span class="badge pull-right" ng-bind="subcategories.length"></span></h3></div>
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            <li ng-if="subcategories.length > filterAfter">
+                <input type="text" class="form-control" placeholder="Filter" ng-model="filterChildrenQuery"/>
+            </li>
+            <li ng-repeat="category in subcategories | filter: filterChildrenQuery" ng-class="{'disabled': category.id == except}">
+                <a ng-if="category.id != except" ng-href="{{ getUrl(category.id) }}"><span ng-bind="category.category"></span><span class="pull-right"><span class="glyphicon glyphicon-triangle-right"></span></span></a>
+                <a ng-if="category.id == except"><span ng-bind="category.category"></span><span class="pull-right"><span class="glyphicon glyphicon-triangle-right"></span></span></a>
+            </li>
+
+        </ul>
+    </div>
+</div>

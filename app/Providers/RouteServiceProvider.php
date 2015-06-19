@@ -23,9 +23,6 @@ class RouteServiceProvider extends ServiceProvider {
 	public function boot(Router $router)
 	{
 		parent::boot($router);
-
-        // Global route patterns
-        $router->pattern('id', '[0-9]+');
     }
 
 	/**

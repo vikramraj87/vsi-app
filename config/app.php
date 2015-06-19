@@ -144,12 +144,8 @@ return [
 		'App\Providers\ConfigServiceProvider',
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
-
-        /*
-         * Custom Service Providers
-         */
-        'Felixkiss\UniqueWithValidator\UniqueWithValidatorServiceProvider'
-	],
+        'App\Providers\ResponseMacroServiceProvider',
+    ],
 
 	/*
 	|--------------------------------------------------------------------------

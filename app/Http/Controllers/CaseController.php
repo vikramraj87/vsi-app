@@ -1,16 +1,16 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 
-use App\Http\Requests\CreateCaseRequest;
-use App\Http\Requests\UpdateCaseRequest;
 use Illuminate\Http\Request;
 
 use App\VirtualCase;
+use Illuminate\Support\Facades\Validator;
 use Kivi\Repositories\CategoryRepository;
 use Kivi\Repositories\VirtualSlideProviderRepository;
 use Kivi\Repositories\CaseRepository;
+use Kivi\Services\Response\Jsend\Failure\Failure404;
+use Kivi\Services\Response\Jsend\Success\Success200;
 
 class CaseController extends Controller {
     /** @var VirtualSlideProviderRepository */
@@ -31,98 +31,137 @@ class CaseController extends Controller {
         $this->categoryRepository             = $categoryRepository;
         $this->virtualSlideProviderRepository = $virtualSlideProviderRepository;
         $this->caseRepository                 = $caseRepository;
-    }
 
-    public function index($parentId = 0)
-    {
-        $category = null;
-        $parents  = [];
-        $parentId = intval($parentId);
-
-        if($parentId > 0) {
-            $category      = $this->categoryRepository->find($parentId);
-            $subCategories = $category->subCategories;
-            $parents       = $this->categoryRepository->parents($category->id);
-        } else {
-            $subCategories = $this->categoryRepository->topLevelCategories();
-        }
-
-        $providers              = $this->virtualSlideProviderRepository->all();
-        $hierarchicalCategories = $this->categoryRepository->hierarchicalCategoryIds($parentId);
-        $cases                  = $this->caseRepository->casesByCategories($hierarchicalCategories);
-
-        return view('case.index', compact('category', 'subCategories', 'parents', 'providers', 'cases'));
+        $this->middleware('atleast_moderator', ['except' => 'index']);
     }
 
     /**
-     * Shows a single record for editing or deleting
+     * Returns all cases belonging to a category. If 0 provided as category id,
+     * returns all cases in the database.
+     *
+     * @param Request $request
+     * @param int $parentId
+     * @return mixed
+     */
+    public function index(Request $request, $parentId = 0)
+    {
+        $parentId = intval($parentId);
+        $category = $this->categoryRepository->find($parentId);
+
+        if(null === $category && $parentId !== 0) {
+            return response()->jsend(new Failure404($parentId));
+        }
+
+        $hierarchicalCategories = $this->categoryRepository->hierarchicalCategoryIds($parentId);
+        $cases = $this->caseRepository->casesByCategories($hierarchicalCategories);
+
+        return response()->jsend(new Success200($cases->toArray()));
+    }
+
+    /**
+     * Return a single case
      *
      * @param $id
-     * @return \Illuminate\View\View
+     * @return mixed
      */
     public function show($id)
     {
-        $case             = $this->caseRepository->find($id);
-        $providers        = $this->virtualSlideProviderRepository->all();
-        $parentCategories = $this->categoryRepository->parents($case->category->id);
+        $id = intval($id);
+        $case = $this->caseRepository->find($id);
 
-        $parentIds = [];
-        foreach($parentCategories as $cat) {
-            $parentIds[] = $cat->category;
+        if(null === $case) {
+            return response()->jsend(new Failure404($id));
         }
-        $parentIds[] = $case->category->category;
 
-        return view('case.show', compact('case', 'providers', 'parentIds'));
+        return response()->jsend(new Success200($case->toArray()));
     }
 
     /**
-     * Creates a new case record
+     * Store a single case in the database after validation
      *
-     * @param CreateCaseRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @param Request $request
+     * @return mixed
      */
-    public function store(CreateCaseRequest $request)
+    public function store(Request $request)
     {
+        $validator = $this->getValidator($request);
+
+        if($validator->fails()) {
+            return response()->jsend('fail', [
+                'reason' => 'ValidationFailed',
+                'errors' => $validator->errors()->all()
+            ]);
+        }
+
         $caseData  = $this->getCaseDataFromRequest($request);
         $slideData = $this->getSlideDataFromRequest($request);
 
         $result = $this->caseRepository->create($caseData, $slideData);
 
-        // todo: Handle $result is false
-
-        return redirect()->route('case-category', $request->get('category_id'));
+        if($result) {
+            return response()->jsend('success');
+        }
+        return response()->jsend('fail');
     }
 
     /**
-     * Updates a case record identified by the id hidden field
-     *
-     * @param UpdateCaseRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function update(UpdateCaseRequest $request)
-    {
-        $caseData  = $this->getCaseDataFromRequest($request);
-        $slideData = $this->getSlideDataFromRequest($request);
-        $id = $request->get('id');
-
-        $result = $this->caseRepository->update($id, $caseData, $slideData);
-
-        // todo: handle $result is false
-
-        return redirect()->route('case-category', $caseData['category_id']);
-    }
-
-    /**
-     * Deletes a case record identified by the id
+     * Updates a single record after validation
      *
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return mixed
+     */
+    public function update(Request $request, $id)
+    {
+        $id = intval($id);
+        $case = $this->caseRepository->find($id);
+        if(null === $case) {
+            return response()->jsend('fail', [
+                'reason' => 'CaseNotFound',
+                'id' => $id
+            ]);
+        }
+
+        $validator = $this->getValidator($request);
+
+        if($validator->fails()) {
+            return response()->jsend('fail', [
+                'reason' => 'ValidationFailed',
+                'errors' => $validator->errors()->all()
+            ]);
+        }
+
+        $caseData  = $this->getCaseDataFromRequest($request);
+        $slideData = $this->getSlideDataFromRequest($request);
+
+        $result = $this->caseRepository->update($case, $caseData, $slideData);
+
+        if($result) {
+            return response()->jsend('success');
+        }
+        return response()->jsend('fail');
+    }
+
+    /**
+     * Deletes a single record
+     *
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
     public function destroy(Request $request, $id)
     {
+        $id = intval($id);
+
         /** @var VirtualCase $case */
         $case = $this->caseRepository->find($id);
+
+        if(null === $case) {
+            return response()->jsend('fail', [
+                'reason' => 'CaseNotFound',
+                'id' => $id
+            ]);
+        }
 
         // Delete the slides of the case
         $case->slides()->delete();
@@ -130,7 +169,7 @@ class CaseController extends Controller {
         // Delete the case itself
         $case->delete();
 
-        return redirect()->route('case-category', $request->get('category_id'));
+        return response()->jsend('success');
     }
 
     /**
@@ -161,11 +200,50 @@ class CaseController extends Controller {
         for ($i = 0; $i < count($request->get('url')); $i++) {
             $slideData[] = [
                 'url'   => $request->get('url')[$i],
-                'stain' => $request->get('stain')[$i]
+                'stain' => $request->get('stain')[$i],
+                'remarks' => $request->get('remarks')[$i]
             ];
         }
         return $slideData;
     }
 
+    private function getValidator(Request $request)
+    {
+        return Validator::make($request->all(), $this->getValidationRules($request));
+    }
 
+    private function getValidationRules(Request $request)
+    {
+        $rules = [
+            'virtual_slide_provider_id' => 'required|integer|exists:virtual_slide_providers,id',
+            'clinical_data' => 'string',
+            'category_id' => 'required|integer|exists:categories,id'
+        ];
+
+        $urlRule = 'required|url|unique:virtual_slides,url,';
+        $stainRule = 'required';
+        $remarksRule = 'string';
+
+        if(! is_array($request->get('url'))) {
+            $rules['url.0'] = $urlRule;
+            $rules['stain.0'] = $stainRule;
+            $rules['remarks.0'] = $remarksRule;
+
+            return $rules;
+        }
+        foreach ($request->get('url') as $key => $val) {
+            $exceptId = $request->exists('slide_id') ? $request->get('slide_id')[$key] : '';
+            $rules['url.' . $key] = $urlRule . $exceptId;
+        }
+
+        foreach ($request->get('stain') as $key => $val) {
+            $rules['stain.' . $key] = $stainRule;
+        }
+
+        foreach ($request->get('remarks') as $key => $val) {
+            $rules['remarks.' . $key] = $remarksRule;
+        }
+
+        return $rules;
+    }
 }

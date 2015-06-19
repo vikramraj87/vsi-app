@@ -4,8 +4,17 @@ use App\Category;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Kivi\Repositories\CategoryRepository;
+
+use Kivi\Services\Response\Jsend\Failure\Failure400;
+use Kivi\Services\Response\Jsend\Failure\Failure409;
+use Kivi\Services\Response\Jsend\Failure\Failure404;
+
+use Kivi\Services\Response\Jsend\Success\Success201;
+use Kivi\Services\Response\Jsend\Success\Success200;
+
 
 class CategoryController extends Controller {
 
@@ -20,90 +29,142 @@ class CategoryController extends Controller {
     public function __construct(CategoryRepository $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
+        $this->middleware('atleast_moderator', ['except' => 'index']);
     }
 
     /**
      * Shows the subcategories of selected category and provides form
      * for editing or deleting the category
      *
-     * @param int $id      Selected category
-     * @param int $edit_id Category to edit. O if none
      * @return \Illuminate\View\View
      */
-    public function index($id = 0, $edit_id = 0)
+    public function index()
     {
-        /** @var int $edit */
-        $edit = $edit_id;
+        $categories = $this->categoryRepository->all();
+        return response()->jsend(new Success200($categories->toArray()));
+    }
 
-        /** @var Category $category */
-        $category = null;
-
-        /** @var array $parents */
-        $parents  = [];
-
-        if($id > 0) {
-            $category = $this->categoryRepository->find($id);
-            $subCategories = $category->subCategories;
-            $parents = $this->categoryRepository->parents($category->id);
-        } else {
-            $subCategories = $this->categoryRepository->topLevelCategories();
+    public function show($id)
+    {
+        $id = intval($id);
+        $category = $this->categoryRepository->find($id);
+        if(null === $category) {
+            return response()->jsend(new Failure404($id));
         }
-        return view('category.index', compact('edit', 'category', 'parents', 'subCategories'));
+        return response()->jsend(new Success200($category->toArray()));
     }
 
     /**
      * Creates a new category record
      *
-     * @param Requests\CreateCategoryRequest $request
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Requests\CreateCategoryRequest $request)
+    public function store(Request $request)
     {
-        $data = [
-            'parent_id' => $request->get('parent_id') == 0 ? null : $request->get('parent_id'),
-            'category'  => $request->get('category')
-        ];
-        $this->categoryRepository->create($data);
+        $validator = $this->validator($request);
 
-        $redirectUrl = $data['parent_id'] == null ? 'categories' : 'categories/' . $data['parent_id'];
-        return redirect($redirectUrl);
+        if($validator->fails()) {
+            return response()->jsend(new Failure400($validator->errors()->all()));
+        }
+
+        $data = $request->only(['parent_id', 'category']);
+
+        if($this->exists($data['parent_id'], $data['category'])) {
+            return response()->jsend(new Failure409());
+        }
+
+        $savedCategory = $this->categoryRepository->create($data);
+        if($savedCategory->exists('id')) {
+            return response()->jsend(new Success201($savedCategory->toArray()));
+        }
+
+        return response()->jsend(new Failure400([]));
     }
 
     /**
-     * Updates a category record identified by the id hidden field
+     * Updates a category record
      *
-     * @param Requests\UpdateCategoryRequest $request
+     * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Requests\UpdateCategoryRequest $request)
+    public function update(Request $request, $id)
     {
-        $id       = $request->get('id');
-        $parentId = $request->get('parent_id');
+        $id = intval($id);
+        $category = $this->categoryRepository->find($id);
 
-        $category           = $this->categoryRepository->find($id);
-        $category->category = $request->get('category');
-        $result = $category->save();
+        if(null === $category) {
+            return response()->jsend(new Failure404($id));
+        }
 
-        // todo: Handle $result = false
+        $validator = $this->validator($request, $id);
 
-        return redirect()->route('category-index', $parentId);
+        if($validator->fails()) {
+            return response()->jsend(new Failure400($validator->errors()->all()));
+        }
+
+        $data = $request->only(['category', 'parent_id']);
+
+        if($this->exists($data['parent_id'], $data['category'], $id)) {
+            return response()->jsend(new Failure409());
+        }
+
+        $category->parent_id = $data['parent_id'];
+        $category->category = $data['category'];
+
+        $result = $this->categoryRepository->update($category);
+
+        if(false === $result) {
+            return response()->jsend(new Failure400());
+        }
+
+        return response()->jsend(new Success200($category->toArray()));
+    }
+
+    public function check($parentId = 0, $categoryName = "", $exclude = 0)
+    {
+        return $this->exists($parentId, $categoryName, $exclude) ?
+            response()->jsend(new Failure409()) : response()->jsend(new Success200());
+    }
+
+    private function exists($parent_id, $category, $exclude = 0)
+    {
+        $parent_id = intval($parent_id);
+        if(0 === $parent_id || "" === $category) {
+            return false;
+        }
+
+        $category = $this->categoryRepository->fetchByParentIdAndCategory($parent_id, $category);
+        if(null === $category) {
+            return false;
+        }
+
+        $exclude = intval($exclude);
+        if($exclude && $category->id === $exclude) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
-     * Deletes the category record
-     *
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     * @throws \Exception
+     * @param Request $request
+     * @param integer $id
+     * @return mixed
      */
-    public function destroy($id)
+    private function validator(Request $request, $id = 0)
     {
-        /** @var Category $category */
-        $category = $this->categoryRepository->find($id);
-        $redirectUrl = $category->parent_id == null ?
-                            'categories' : 'categories/' . $category->parent_id;
-        $category->delete();
-        return redirect($redirectUrl);
+        $validator = Validator::make($request->all(), [
+            'parent_id' => 'required|integer|exists:categories,id',
+            'category' => 'required|string'
+        ]);
 
+        $validator->after(function($validator) use($request, $id) {
+            if($request->get('parent_id') == $id) {
+                $validator->errors()->add('parent_id', 'A category cannot be a parent for itself');
+            }
+        });
+
+        return $validator;
     }
 }

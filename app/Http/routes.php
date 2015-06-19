@@ -1,40 +1,41 @@
 <?php
+// Routes handled by angularjs
+Route::get('/', 'IndexController@index');
 
-Route::get('/', 'WelcomeController@index');
+Route::get('/category/{category_id}/cases', 'IndexController@index');
+Route::get('/category/{category_id}/categories', ['uses' => 'IndexController@index']);
+Route::get('/category/{category_id}/edit/{child_id}', 'IndexController@index');
+Route::get('/category/{category_id}/case/create', 'IndexController@index');
+Route::get('/category/{category_id}/case/edit/{case_id}', 'IndexController@index');
 
-Route::get('home', 'HomeController@index');
+Route::get('/login', 'IndexController@index');
+//Route::get('/home', 'IndexController@index');
+//Route::get('/cases/create', 'IndexController@index');
+//Route::get('/cases/category/{category_id}', 'IndexController@index');
+//Route::get('/categories/create', 'IndexController@index');
+//Route::get('/categories/edit/{id}', 'IndexController@index');
+//Route::get('/categories/{parent_id?}', 'IndexController@index');
+//Route::get('/auth/register', 'IndexController@index');
 
-Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
-]);
 
-Route::get('test', function() {
-    $repo = new Kivi\Repositories\CategoryRepository();
-    return $repo->hierarchicalCategoryIds(0);
+// AJAX routes
+Route::group(['prefix' => 'api'], function() {
+    Route::resource('categories', 'CategoryController', ['only' => ['index', 'show', 'store', 'update']]);
+    Route::get('categories/check-existence/{parentId}/{category}/{exclude?}', 'CategoryController@check');
+
+
+    Route::resource('cases', 'CaseController', ['only' => ['index', 'show', 'store', 'update', 'destroy']]);
+    Route::get('cases/category/{id}', ['as' => 'cases.category', 'uses' => 'CaseController@index']);
+
+    Route::resource('providers', 'ProviderController', ['only' => ['index']]);
+
+    Route::get('slides/check-url-existence/{exceptId}', 'SlideController@checkUrl');
+
+    Route::get('users/check-email/{email}', 'UserController@checkEmail');
+
+    Route::post('auth/login', 'Auth\AuthController@authenticate');
+    Route::get('auth/user', 'Auth\AuthController@user');
+    Route::get('auth/logout', 'Auth\AuthController@logout');
 });
-// Search route
-Route::get('search/{term}', 'SearchController@index');
-
-/*
- * Category resource routes
- *
- */
-Route::get('categories/{id?}',               ['as' => 'category-index',    'uses' => 'CategoryController@index']);
-Route::get('categories/{id}/edit/{edit_id}', ['as' => 'category-edit',    'uses' => 'CategoryController@index'])
-    ->where('edit_id', '[0-9]+');
-Route::delete('categories/{id}',             ['as' => 'category-destroy', 'uses' =>'CategoryController@destroy']);
-Route::post('categories',                    ['as' => 'category-store',   'uses' => 'CategoryController@store']);
-Route::put('categories',                     ['as' => 'category-update',  'uses' => 'CategoryController@update']);
 
 
-/*
- * Case resource routes
- */
-Route::get('cases/category/{category_id}',  ['as' => 'case-category', 'uses' => 'CaseController@index'])
-    ->where('category_id', '[0-9]+');
-Route::get('cases/{id}',                    ['as' => 'case-show',     'uses' => 'CaseController@show']);
-Route::get('cases',                         ['as' => 'case-index',    'uses' => 'CaseController@index']);
-Route::post('cases',                        ['as' => 'case-store',    'uses' => 'CaseController@store']);
-Route::put('cases',                         ['as' => 'case-update',   'uses' => 'CaseController@update']);
-Route::delete('cases/{id}',                 ['as' => 'case-destroy',  'uses' => 'CaseController@destroy']);

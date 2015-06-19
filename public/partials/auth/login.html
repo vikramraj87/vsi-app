@@ -1,0 +1,37 @@
+<div class="container" id="page-content">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Login</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="alert alert-danger" ng-if="invalidCredentials">Email and password did not match</div>
+                    <form class="form" role="form" novalidate ng-submit="login(credentials)" name="loginForm">
+                        <div class="form-group" ng-class="{'has-error': (loginForm.emailField.$dirty || loginForm.$submitted) && loginForm.emailField.$invalid}">
+                            <label class="control-label">E-Mail Address</label>
+                            <input type="email" class="form-control" name="emailField" ng-required="true" kv-email-exists
+                                   ng-model="credentials.email" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}">
+                            <span class="help-block" ng-show="(loginForm.emailField.$dirty || loginForm.$submitted) && loginForm.emailField.$error.required">Please enter your email address</span>
+                            <span class="help-block" ng-show="(loginForm.emailField.$dirty || loginForm.$submitted) && loginForm.emailField.$error.email">Please provide a valid email address</span>
+                            <span class="help-block" ng-show="(loginForm.emailField.$dirty || loginForm.$submitted) && loginForm.emailField.$error.exists">Email address not registered with us</span>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': (loginForm.passwordField.$dirty || loginForm.$submitted) && loginForm.passwordField.$invalid}">
+                            <label class="control-label">Password</label>
+                            <input type="password" class="form-control" name="passwordField"
+                                   ng-required="true" ng-model="credentials.password" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}">
+                            <span class="help-block" ng-show="(loginForm.passwordField.$dirty || loginForm.$submitted) && loginForm.passwordField.$error.required">Please provide a password</span>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

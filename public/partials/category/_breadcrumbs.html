@@ -1,0 +1,11 @@
+<ol class="breadcrumb">
+    <li>
+        <a ng-href="{{ getUrl(0) }}">Categories</a>
+    </li>
+    <li ng-repeat="parent in ancestors">
+        <a ng-bind="parent.category" ng-href="{{ getUrl(parent.id) }}"></a>
+    </li>
+    <li ng-show="category">
+        <span ng-bind="category.category"></span>
+    </li>
+</ol>

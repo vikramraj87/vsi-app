@@ -42,7 +42,7 @@ class CreateCasesTable extends Migration {
 		Schema::create('cases', function(Blueprint $table)
 		{
 			$table->increments('id');
-            $table->text('clinical_data');
+            $table->text('clinical_data')->nullable();
             $table->integer('category_id')->unsigned()->nullable();
             $table->integer('virtual_slide_provider_id')->unsigned()->nullable();
 			$table->timestamps();
@@ -64,8 +64,7 @@ class CreateCasesTable extends Migration {
             $table->increments('id');
             $table->string('url')->unique();
             $table->string('stain', 50);
-            $table->integer('x');
-            $table->integer('y');
+            $table->text('remarks')->nullable();
             $table->integer('case_id')->unsigned();
             $table->timestamps();
 

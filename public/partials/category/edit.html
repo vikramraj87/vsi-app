@@ -1,0 +1,56 @@
+<div id="page-content">
+    <div class="row">
+        <div class="col-md-12">
+            <kv-breadcrumbs ancestors="parents" category="category" params="{categoryId : {{selected.id}} }"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3" ng-show="children.length">
+            <kv-subcategories subcategories="children" params="{categoryId: {{selected.id}} }" except="{{ selected.id }}"/>
+        </div>
+        <div ng-class="children.length ? 'col-md-9' : 'col-md-12'">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Edit Category</h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" name="editCategoryForm" ng-submit="save(selected)" novalidate>
+                        <div ng-model="selected" kv-unique-category>
+                            <div class="form-group" ng-class="{'has-error': editCategoryForm.$submitted && category === null}">
+                                <label class="col-sm-2 control-label">Under</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static" ng-show="!category">None selected</p>
+                                    <p class="form-control-static" ng-show="category" ng-bind="category.category"></p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <span class="help-block" ng-show="editCategoryForm.$submitted && category === null">Please select from left pane</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" ng-class="{'has-error': ((editCategoryForm.$submitted || editCategoryForm.categoryField.$dirty) && editCategoryForm.categoryField.$invalid) || editCategoryForm.$error.unique }">
+                                <label class="col-sm-2 control-label">Category</label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="text" placeholder="Category name" ng-model-options="{updateOn: 'default blur',  debounce: { default: 800, blur: 0 }}"
+                                           name="categoryField" ng-model="selected.category" ng-required="true" ng-pattern="/^[a-z0-9 -_]+$/i"/>
+                                </div>
+                                <div class="col-sm-4">
+                                    <span class="help-block" ng-show="(editCategoryForm.$submitted || editCategoryForm.categoryField.$dirty) && editCategoryForm.categoryField.$error.required">Please provide a name</span>
+                                    <span class="help-block" ng-show="(editCategoryForm.$submitted || editCategoryForm.$error.unique)">Category already exists</span>
+                                    <span class="help-block" ng-show="(editCategoryForm.$submitted || editCategoryForm.categoryField.$dirty) && editCategoryForm.categoryField.$error.pattern">Invalid name</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-6 col-sm-offset-2">
+                                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-save"></span> Save</button>
+                                <a class="btn btn-link" ui-sref="category.category-list({id: originalParentId})">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
